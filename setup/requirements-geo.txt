@@ -1,0 +1,9 @@
+# Geospatial + plotting stack (README section 2.2 pins)
+# geopandas is NOT optional: pycode/callUtility.py imports it at module level
+geopandas==0.12.2  # README pins 0.12.3, which does not exist on PyPI
+geoplot==0.4.3
+mapclassify==2.5.0
+matplotlib==3.7.1
+plotly==5.14.0
+# geopandas 0.12.x calls fiona.path, which fiona 1.10 removed
+fiona<1.10

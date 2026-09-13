@@ -1,0 +1,2827 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The pwrlab Handbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --rail:#E6EAEE;
+  --ink:#15202B; --ink-2:#55656F; --ink-3:#7E8C96;
+  --rule:#D4DBE1; --rule-soft:#E3E8EC;
+  --accent:#A85A22; --accent-soft:#F0E2D6;
+  --danger:#9E2A22; --danger-soft:#F5E1DE;
+  --note:#166B6B; --note-soft:#DCECEC;
+  --term:#141C24; --term-ink:#D8E2EA; --term-dim:#7C8A97;
+  --shadow:0 1px 2px rgba(21,32,43,.06),0 6px 18px rgba(21,32,43,.05);
+  --sans:"IBM Plex Sans Condensed",ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F161D; --surface:#161F27; --rail:#121A22;
+  --ink:#E2E9EF; --ink-2:#94A3AF; --ink-3:#72818D;
+  --rule:#26333E; --rule-soft:#1D2831;
+  --accent:#DE8B4E; --accent-soft:#33251A;
+  --danger:#E1685F; --danger-soft:#341D1B;
+  --note:#54B5B5; --note-soft:#122B2B;
+  --term:#0A1016; --term-ink:#D2DDE6; --term-dim:#6C7B88;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --bg:#0F161D; --surface:#161F27; --rail:#121A22;
+  --ink:#E2E9EF; --ink-2:#94A3AF; --ink-3:#72818D;
+  --rule:#26333E; --rule-soft:#1D2831;
+  --accent:#DE8B4E; --accent-soft:#33251A;
+  --danger:#E1685F; --danger-soft:#341D1B;
+  --note:#54B5B5; --note-soft:#122B2B;
+  --term:#0A1016; --term-ink:#D2DDE6; --term-dim:#6C7B88;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);
+  font-size:16.5px;line-height:1.68;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;min-height:100vh}
+
+/* ---------- rail ---------- */
+.rail{background:var(--rail);border-right:1px solid var(--rule);
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 0 40px}
+.rail-head{padding:0 22px 18px}
+.mark{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:500}
+.rail-title{font-family:var(--sans);font-weight:700;font-size:21px;line-height:1.15;
+  margin:7px 0 0;letter-spacing:-.005em}
+.rail-sub{font-size:12.5px;color:var(--ink-3);margin:5px 0 0;line-height:1.45}
+
+.vitals{margin:0 22px 20px;padding:14px 0;border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);display:grid;gap:7px}
+.vital{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.vital dt{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600}
+.vital dd{margin:0;font-family:var(--mono);font-size:12px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
+
+.nav-label{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;padding:0 22px;margin:0 0 8px}
+.nav{list-style:none;margin:0;padding:0}
+.nav a{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;
+  padding:5px 22px;font-family:var(--sans);font-size:13.5px;line-height:1.32;
+  color:var(--ink-2);text-decoration:none;border-left:2px solid transparent}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.nav .n{font-family:var(--mono);font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.nav a:target,.nav a:focus{color:var(--accent)}
+.nav a.on .n{color:var(--accent)}
+.nav li.lead a{font-weight:600;color:var(--ink)}
+.nav li.lead{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+
+.theme-btn{margin:20px 22px 0;padding:6px 11px;background:transparent;color:var(--ink-2);
+  border:1px solid var(--rule);border-radius:3px;font-family:var(--sans);font-size:12px;
+  font-weight:600;letter-spacing:.04em;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+/* ---------- main ---------- */
+.main{padding:0 0 100px;min-width:0}
+.masthead{padding:44px 52px 30px;border-bottom:1px solid var(--rule);background:var(--surface)}
+.masthead h1{font-family:var(--sans);font-weight:700;font-size:clamp(30px,4.2vw,44px);
+  line-height:1.06;letter-spacing:-.02em;margin:10px 0 0;text-wrap:balance;max-width:20ch}
+.lede{max-width:62ch;margin:16px 0 0;font-size:17px;color:var(--ink-2);line-height:1.6}
+.lede strong{color:var(--ink);font-weight:600}
+
+.strip{display:flex;flex-wrap:wrap;gap:0;margin:28px 0 0;border:1px solid var(--rule);
+  border-radius:3px;overflow:hidden;background:var(--bg)}
+.strip div{flex:1 1 128px;padding:11px 14px;border-right:1px solid var(--rule)}
+.strip div:last-child{border-right:0}
+.strip dt{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;margin:0}
+.strip dd{margin:3px 0 0;font-family:var(--mono);font-size:14px;color:var(--ink);
+  font-variant-numeric:tabular-nums;font-weight:500}
+
+/* ---------- document body ---------- */
+.doc{padding:0 52px;max-width:calc(68ch + 104px)}
+.doc h1{font-family:var(--sans);font-weight:700;font-size:29px;line-height:1.12;
+  letter-spacing:-.015em;margin:58px 0 0;padding-top:26px;border-top:2px solid var(--ink);
+  text-wrap:balance;scroll-margin-top:18px}
+.doc h1:first-child{margin-top:38px}
+.doc h2{font-family:var(--sans);font-weight:600;font-size:20px;line-height:1.2;
+  margin:38px 0 0;color:var(--ink);text-wrap:balance;scroll-margin-top:18px}
+.doc h3{font-family:var(--sans);font-weight:600;font-size:15.5px;letter-spacing:.01em;
+  margin:28px 0 0;color:var(--ink-2);text-wrap:balance}
+.doc p{margin:14px 0 0;max-width:68ch}
+.doc ul,.doc ol{margin:14px 0 0;padding-left:22px;max-width:66ch}
+.doc li{margin:5px 0}
+.doc li::marker{color:var(--ink-3)}
+.doc hr{display:none}
+.doc strong{font-weight:600}
+
+/* inline code */
+.doc :not(pre)>code{font-family:var(--mono);font-size:.855em;background:var(--accent-soft);
+  color:var(--ink);padding:1px 5px;border-radius:2px;word-break:break-word}
+
+/* code blocks read as a terminal — the whole guide is about the terminal */
+.doc pre{margin:18px 0 0;background:var(--term);border-radius:4px;overflow-x:auto;
+  padding:15px 18px;box-shadow:var(--shadow);border:1px solid var(--rule-soft)}
+.doc pre code{font-family:var(--mono);font-size:13px;line-height:1.62;color:var(--term-ink);
+  background:none;padding:0;white-space:pre}
+.doc pre::before{content:attr(data-lang);display:block;font-family:var(--sans);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--term-dim);margin:0 0 9px;font-weight:600}
+
+/* tables */
+.tw{overflow-x:auto;margin:20px 0 0;border:1px solid var(--rule);border-radius:3px;
+  background:var(--surface)}
+.doc table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;
+  font-variant-numeric:tabular-nums}
+.doc thead th{text-align:left;font-weight:600;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);padding:10px 14px;border-bottom:1px solid var(--rule);
+  white-space:nowrap;background:var(--bg)}
+.doc tbody td{padding:9px 14px;border-bottom:1px solid var(--rule-soft);
+  vertical-align:top;line-height:1.5;color:var(--ink-2)}
+.doc tbody tr:last-child td{border-bottom:0}
+.doc tbody td:first-child{color:var(--ink);font-weight:500}
+.doc td code,.doc th code{background:none;padding:0;color:var(--accent);font-size:.9em}
+
+/* callouts */
+.doc blockquote{margin:20px 0 0;padding:13px 18px;border-left:3px solid var(--note);
+  background:var(--note-soft);border-radius:0 3px 3px 0;max-width:68ch}
+.doc blockquote p{margin:8px 0 0;font-size:15.5px;line-height:1.58}
+.doc blockquote p:first-child{margin:0}
+.doc blockquote.danger{border-left-color:var(--danger);background:var(--danger-soft)}
+.doc blockquote.warn{border-left-color:var(--accent);background:var(--accent-soft)}
+.doc blockquote code{background:rgba(0,0,0,.07)}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:20px 0}
+  .rail .nav-wrap{max-height:230px;overflow-y:auto}
+  .masthead{padding:30px 22px 24px}
+  .doc{padding:0 22px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+html{scroll-behavior:smooth}
+</style>
+<style>body{margin:0} img{max-width:100%}</style>
+</head><body>
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-head">
+      <div class="mark">Power&nbsp;Lab &middot; UC San Diego</div>
+      <h2 class="rail-title">The pwrlab<br>Handbook</h2>
+      <p class="rail-sub">Running the China energy&nbsp;pathways model on a shared Linux node.</p>
+    </div>
+    <dl class="vitals">
+      <div class="vital"><dt>Host</dt><dd>pwrlab</dd></div>
+      <div class="vital"><dt>Connect to</dt><dd>pwrlab.ucsd.edu</dd></div>
+      <div class="vital"><dt>Account</dt><dd>taw021</dd></div>
+      <div class="vital"><dt>Cores</dt><dd>72</dd></div>
+      <div class="vital"><dt>Memory</dt><dd>187 GB</dd></div>
+      <div class="vital"><dt>OS</dt><dd>Ubuntu 24.04</dd></div>
+    </dl>
+    <p class="nav-label">Contents</p>
+    <div class="nav-wrap"><ul class="nav"><li class="lead"><a href="#sec-1"><span class="n">→</span><span>Quickstart</span></a></li>
+<li><a href="#sec-2"><span class="n">01</span><span>What you are working with</span></a></li>
+<li><a href="#sec-3"><span class="n">02</span><span>Connecting to the node</span></a></li>
+<li><a href="#sec-4"><span class="n">03</span><span>Using Claude Code over SSH (Windows)</span></a></li>
+<li><a href="#sec-5"><span class="n">04</span><span>How the model works</span></a></li>
+<li><a href="#sec-6"><span class="n">05</span><span>How the machine works</span></a></li>
+<li><a href="#sec-7"><span class="n">06</span><span>Working in the terminal</span></a></li>
+<li><a href="#sec-8"><span class="n">07</span><span>Where everything lives on this account</span></a></li>
+<li><a href="#sec-9"><span class="n">08</span><span>tmux: the single most important tool here</span></a></li>
+<li><a href="#sec-10"><span class="n">09</span><span>Editing files on the node</span></a></li>
+<li><a href="#sec-11"><span class="n">10</span><span>Moving files between your laptop and the node</span></a></li>
+<li><a href="#sec-12"><span class="n">11</span><span>Running the model</span></a></li>
+<li><a href="#sec-13"><span class="n">12</span><span>Changing the scenario</span></a></li>
+<li><a href="#sec-14"><span class="n">13</span><span>Watching a run and reading the results</span></a></li>
+<li><a href="#sec-15"><span class="n">14</span><span>Sharing the machine</span></a></li>
+<li><a href="#sec-16"><span class="n">15</span><span>Optional: the agentic-optimization framework</span></a></li>
+<li><a href="#sec-17"><span class="n">16</span><span>When things go wrong</span></a></li>
+<li><a href="#sec-18"><span class="n">17</span><span>Cheat sheet</span></a></li></ul></div>
+  </aside>
+  <main class="main">
+    <header class="masthead">
+      <div class="mark">Field guide &middot; offline copy</div>
+      <h1>Using the node, from zero</h1>
+      <p class="lede">Parts 1&ndash;3 get you connected. Parts 4&ndash;5 explain how the model and the machine actually work, so the rest is reasoning rather than recitation. Everything after that is the practical how-to.</p>
+      <dl class="strip">
+        <div><dt>Processor</dt><dd>Xeon 6240</dd></div>
+        <div><dt>Cores</dt><dd>72</dd></div>
+        <div><dt>RAM</dt><dd>187 GB</dd></div>
+        <div><dt>Parts</dt><dd>17</dd></div>
+      </dl>
+    </header>
+    <article class="doc"><h1 id="sec-1">Quickstart</h1>
+<p>The whole workflow on one page. Every step is explained properly later — Part 11 for
+running, Part 8 for tmux, Part 13 for results — but this is what you actually type.</p>
+<p><strong>1. Connect.</strong> Open PowerShell on your laptop:</p>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<p>Enter the password. Nothing appears as you type; that is normal.</p>
+<p><strong>2. Start tmux.</strong> Not optional — without it, closing your laptop kills the run:</p>
+<pre data-lang="terminal"><code>tmux new -s run1
+</code></pre>
+<p><strong>3. Turn on the environment:</strong></p>
+<pre data-lang="terminal"><code>source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+</code></pre>
+<p>Your prompt gains <code>(.venv)</code> and you land in <code>pycode/</code>.</p>
+<p><strong>4. Choose your scenario</strong> — skip this to run whatever is already set:</p>
+<pre data-lang="terminal"><code>nano -l pycode/testMultiYear.py
+</code></pre>
+<p>Lines 34–45. Change only the values to the right of the <code>=</code>, and do not touch the spaces at
+the start of a line. Save with <code>Ctrl+O</code>, <code>Enter</code>, then <code>Ctrl+X</code>.</p>
+<p><strong>5. Run it:</strong></p>
+<pre data-lang="terminal"><code>python testMultiYear.py
+</code></pre>
+<p><strong>6. Walk away.</strong> Press <code>Ctrl+B</code>, then <code>D</code>. The run continues on the node. You can close
+PowerShell, shut the laptop, and go home.</p>
+<p><strong>7. Come back whenever:</strong></p>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+tmux attach -t run1
+</code></pre>
+<p><strong>8. Read the headline results:</strong></p>
+<pre data-lang="terminal"><code>column -s, -t ~/AdvAppliedEnergy_Pathways_2025/data_res/test_*/stat_national.csv | less -S
+</code></pre>
+<p>Arrow keys scroll, <code>q</code> quits.</p>
+<p><strong>9. Copy them to your laptop</strong> — run this in PowerShell, <em>not</em> while logged into the node:</p>
+<pre data-lang="terminal"><code>scp taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/test_*/stat_national.csv .
+</code></pre>
+<blockquote>
+<p><strong>You can also just ask.</strong> In a Claude Code session (Part 3) you can say what you want
+in plain English — <em>"set the scenario to 1.5 °C with 7 days, show me the diff, then start
+it in a tmux session called run1"</em> — and let it do steps 4 and 5 for you. Part 11.5 covers
+this, including the one instruction you must not leave out: <strong>tell it to use tmux</strong>, or
+the run dies when your session ends.</p>
+</blockquote>
+<h2>Three things that will catch you out</h2>
+<blockquote>
+<p><strong>Re-running the same settings on the same day fails</strong> with
+<code>FileExistsError: ... /provin_demand_hourly</code>. The output folder from the previous attempt
+is still there and the scripts will not overwrite it. Delete it first, or change
+<code>custom_tag</code> to give the new run its own folder. See Part 16.5.</p>
+<p><strong>A 7-day run is a smoke test, not a result.</strong> It takes about 30 minutes and cannot see
+seasonal storage or rare stress events, so it systematically under-builds for
+reliability (Part 4.7). A real answer needs <code>optimization_days = 365</code>, which takes up to
+~20 hours.</p>
+<p><strong>The disk is nearly full</strong> — under 11 GB free, shared with thirteen other people. Every
+run writes several GB to <code>data_res</code>. Copy results to your laptop, then delete the folder
+from the node. Check with <code>df -h /</code>.</p>
+</blockquote>
+<h2>This install is validated</h2>
+<p>Running the script <strong>as committed</strong> reproduces the README's published demo figures:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Decade</th>
+<th>Onshore wind</th>
+<th>Utility solar</th>
+<th>New transmission</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2030</td>
+<td>610 → <strong>608.9</strong></td>
+<td>234 → <strong>234.1</strong></td>
+<td>27 → <strong>27.6</strong></td>
+</tr>
+<tr>
+<td>2040</td>
+<td>1257 → <strong>1260.9</strong></td>
+<td>250 → <strong>249.8</strong></td>
+<td>93 → <strong>92.3</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Six of six within rounding, covering both structural cases: 2030 solving from real 2020
+initial conditions, and 2040 solving from 2030's chained output.</p>
+<p>2050 and 2060 solved but their summaries were not captured — the run exhausted the disk
+first, which is the hazard Part 14 is about. The comparison above is the check to repeat
+after any change to the environment.</p>
+<blockquote>
+<p><strong>Run the file as committed when you want to reproduce those numbers.</strong> The published
+demo corresponds to the settings already in <code>testMultiYear.py</code> — heat-pump heating, +5%
+demand, <code>endogenize_firm_capacity = 0</code>. The different baseline quoted in the model's
+README §5.3 belongs to the <em>full-year</em> reproduction runs and produces different
+capacities; substituting it is an easy and confusing mistake to make.</p>
+</blockquote>
+<hr />
+<h1 id="sec-2">Part 1 — What you are working with</h1>
+<h2>1.1 The mental model</h2>
+<p>You have a laptop. Somewhere in a building at UCSD there is a second computer called
+<strong><code>pwrlab</code></strong>. It has no screen, no keyboard and no mouse attached to it. The only way to
+use it is to type text commands at it over the network from your laptop.</p>
+<p>That is the whole idea. Your laptop becomes a <em>window</em> into the other machine. When you
+type <code>ls</code> and press Enter, your laptop sends those two letters to <code>pwrlab</code>, <code>pwrlab</code> runs
+the command, and sends the text back for your laptop to display. Nothing is running on
+your laptop except the window.</p>
+<p>Three things follow from this, and most later confusion traces back to one of them:</p>
+<ol>
+<li><strong>Files on your laptop are not on the node, and vice versa.</strong> They are separate
+   computers with separate hard drives. Downloading a file "to your computer" while
+   connected to the node downloads it <em>to the node</em>. Part 10 covers how to move files
+   across.</li>
+<li><strong>If your laptop loses its network connection, whatever you were running is killed</strong> —
+   unless you took the precaution in Part 8. Closing your laptop lid counts. Coffee-shop
+   wifi dropping counts. This is the #1 way people lose a 12-hour model run.</li>
+<li><strong>Other people are using this machine at the same time as you.</strong> It is a shared lab
+   resource. You can see them, they can see you, and you can accidentally bring the
+   machine to its knees for everyone. Part 14 covers the etiquette.</li>
+</ol>
+<h2>1.2 Why bother with a remote machine at all?</h2>
+<p>Because it is enormously more powerful than your laptop:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>pwrlab</code></th>
+<th>A good laptop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Processor</td>
+<td>Intel Xeon Gold 6240 @ 2.60 GHz</td>
+<td>Apple M-series / Intel i7</td>
+</tr>
+<tr>
+<td>CPU cores</td>
+<td><strong>72</strong></td>
+<td>8–12</td>
+</tr>
+<tr>
+<td>Memory (RAM)</td>
+<td><strong>187 GB</strong></td>
+<td>16–32 GB</td>
+</tr>
+<tr>
+<td>Runs 24/7</td>
+<td>Yes</td>
+<td>No — it sleeps when you close it</td>
+</tr>
+</tbody>
+</table></div>
+<p>The energy model you are going to run is a very large linear optimisation problem. A
+full-year, four-period scenario can use tens of gigabytes of RAM and run for many hours.
+Your laptop cannot do this. <code>pwrlab</code> can, and it can keep doing it overnight while you
+sleep.</p>
+<h2>1.3 The vital statistics</h2>
+<p>Keep these somewhere you can find them:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Thing</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Machine name (hostname)</td>
+<td><code>pwrlab</code></td>
+</tr>
+<tr>
+<td>Address you connect to</td>
+<td><code>pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td>Its IP address</td>
+<td><code>169.228.63.79</code> — only needed if the name ever fails to resolve</td>
+</tr>
+<tr>
+<td>Operating system</td>
+<td>Ubuntu 24.04.4 LTS (a flavour of Linux)</td>
+</tr>
+<tr>
+<td>Your username</td>
+<td><code>taw021</code></td>
+</tr>
+<tr>
+<td>Your password</td>
+<td><em>given to you separately — never put it in a file or an email</em></td>
+</tr>
+<tr>
+<td>Your home folder</td>
+<td><code>/home/taw021</code></td>
+</tr>
+<tr>
+<td>The model lives in</td>
+<td><code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code></td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>A word on the disk.</strong> The node's main drive is 98 GB and is currently <strong>81% full,
+with about 19 GB free</strong>. That is not much. The model's input data alone is ~7 GB and
+results accumulate with every run. Check free space (Part 17) before large downloads or
+long runs, and delete old results you no longer need. A full disk causes errors for
+every user on the machine, not just you.</p>
+</blockquote>
+<hr />
+<h1 id="sec-3">Part 2 — Connecting to the node</h1>
+<p>Connecting is done with a tool called <strong>SSH</strong> (Secure Shell). It is built in to both
+macOS and Windows now; you do not need to install anything.</p>
+<h2>2.1 If you are on a Mac</h2>
+<ol>
+<li>Press <code>Cmd</code> + <code>Space</code> to open Spotlight.</li>
+<li>Type <code>Terminal</code> and press Enter. A window with a text prompt opens.</li>
+<li>Type this and press Enter:</li>
+</ol>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<h2>2.2 If you are on Windows</h2>
+<ol>
+<li>Press the <code>Windows</code> key, type <code>PowerShell</code>, press Enter.</li>
+<li>Type the same command and press Enter:</li>
+</ol>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<p>(Windows Terminal or PowerShell both work. You do <strong>not</strong> need PuTTY any more, though it
+works fine if you prefer a graphical setup.)</p>
+<h2>2.3 What happens on the very first connection</h2>
+<p>The first time only, you will see:</p>
+<pre data-lang="terminal"><code>The authenticity of host 'pwrlab.ucsd.edu' can't be established.
+ED25519 key fingerprint is SHA256:xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.
+Are you sure you want to continue connecting (yes/no/[fingerprint])?
+</code></pre>
+<p>This is normal. Your computer is saying "I have never met this machine before, is it
+really the one you meant?" Type the full word <code>yes</code> and press Enter. You will not be
+asked again.</p>
+<h2>2.4 The password</h2>
+<p>Next you will see:</p>
+<pre data-lang="terminal"><code>taw021@pwrlab.ucsd.edu's password:
+</code></pre>
+<p>Type your password and press Enter.</p>
+<blockquote>
+<p><strong>Nothing will appear as you type</strong> — no dots, no asterisks, no moving cursor. This is
+deliberate: it hides the length of your password from anyone looking over your shoulder.
+Your keystrokes are registering. Type the password and press Enter as normal.</p>
+</blockquote>
+<p>If you mistype it, you are asked again.</p>
+<h2>2.5 You're in</h2>
+<p>You will see a wall of Ubuntu welcome text and then a line ending in a <code>$</code>:</p>
+<pre data-lang="terminal"><code>taw021@pwrlab:~$
+</code></pre>
+<p>That <code>$</code> is the <strong>prompt</strong>. It means "I am ready, type something." You are now typing on
+a computer in a machine room, not on your laptop.</p>
+<h2>2.6 Leaving</h2>
+<p>Type <code>exit</code> and press Enter, or press <code>Ctrl</code> + <code>D</code>. Read Part 8 first though — logging
+out kills anything you were running, unless you used tmux.</p>
+<h2>2.7 Optional: set up a key so you stop typing your password</h2>
+<p>A <strong>key pair</strong> lets your laptop prove who it is automatically, so you are never asked for
+the password again. Nothing in this guide requires it — password login works everywhere,
+including the Claude Code desktop app — but it is a pleasant quality-of-life improvement
+if you connect often.</p>
+<p>Run this <strong>on your laptop</strong>, not on the node:</p>
+<pre data-lang="terminal"><code>ssh-keygen -t ed25519
+</code></pre>
+<p>Press Enter three times to accept all the defaults. Then install the public half on the
+node.</p>
+<p><strong>On Mac or Linux</strong>, there is a command that does it for you:</p>
+<pre data-lang="terminal"><code>ssh-copy-id taw021@pwrlab.ucsd.edu
+</code></pre>
+<p><strong>On Windows there is no <code>ssh-copy-id</code>.</strong> Use this instead — it achieves the same thing:</p>
+<pre data-lang="terminal"><code>type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh taw021@pwrlab.ucsd.edu &quot;mkdir -p ~/.ssh &amp;&amp; chmod 700 ~/.ssh &amp;&amp; cat &gt;&gt; ~/.ssh/authorized_keys &amp;&amp; chmod 600 ~/.ssh/authorized_keys&quot;
+</code></pre>
+<p>Enter your password one final time. From now on <code>ssh taw021@pwrlab.ucsd.edu</code> logs you
+straight in.</p>
+<blockquote>
+<p>Once a key is in place, you can point the Claude Code desktop app's <strong>Identity File</strong>
+field (Part 3.2) at it and stop being asked for the password there too.</p>
+</blockquote>
+<p>You can go further and give the machine a nickname. On your laptop, create or edit the
+file <code>~/.ssh/config</code> and add:</p>
+<pre data-lang="terminal"><code>Host pwrlab
+    HostName pwrlab.ucsd.edu
+    User taw021
+    ServerAliveInterval 60
+</code></pre>
+<p>Now you can connect by just typing <code>ssh pwrlab</code>. The <code>ServerAliveInterval</code> line is worth
+having — it sends a tiny keep-alive signal every 60 seconds so that your connection is
+less likely to be dropped for idleness.</p>
+<hr />
+<h1 id="sec-4">Part 3 — Using Claude Code over SSH (Windows)</h1>
+<p>This is how the account was set up in the first place, and it is the quickest way to get
+working on the node. The Claude Code <strong>desktop app</strong> runs on your Windows laptop, connects
+to <code>pwrlab</code> over SSH, and gives you a chat window, a file editor and a visual diff view —
+all operating on files that live on the node.</p>
+<p>You describe what you want in plain English; Claude runs the commands on the node.</p>
+<blockquote>
+<p><strong>Requirement:</strong> Claude Code needs a <strong>Pro, Max, Team or Enterprise</strong> Claude
+subscription. The free plan does not include it.</p>
+</blockquote>
+<h2>3.1 Install the desktop app</h2>
+<ol>
+<li>Download the Windows installer:
+   <strong>https://claude.ai/api/desktop/win32/x64/setup/latest/redirect</strong>
+   (If your laptop has an ARM processor — a Snapdragon-based Surface, for example — use
+   the ARM64 installer linked from https://code.claude.com/docs/en/desktop-quickstart.)</li>
+<li>Run it. You do not need administrator rights.</li>
+<li>Launch <strong>Claude</strong> from the Start menu and sign in.</li>
+<li>Click the <strong>Code</strong> tab at the top.</li>
+</ol>
+<p>You do <strong>not</strong> need to install Node.js, Python, or the <code>claude</code> command separately — the
+desktop app contains everything.</p>
+<h2>3.2 Add the node</h2>
+<ol>
+<li>In the <strong>Code</strong> tab, click the <strong>environment dropdown</strong> (it reads <strong>Local</strong> by
+   default).</li>
+<li>Choose <strong>+ Add SSH connection</strong>.</li>
+<li>Fill in:</li>
+</ol>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Name</strong></td>
+<td><code>pwrlab</code> — any label you like</td>
+</tr>
+<tr>
+<td><strong>SSH Host</strong></td>
+<td><code>taw021@pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td><strong>SSH Port</strong></td>
+<td><code>22</code>, or leave blank</td>
+</tr>
+<tr>
+<td><strong>Identity File</strong></td>
+<td>leave blank</td>
+</tr>
+</tbody>
+</table></div>
+<ol start="4">
+<li>Save, then select <strong>pwrlab</strong> from the dropdown. You will be asked for the account
+   password.</li>
+</ol>
+<p>That is the whole setup. <code>pwrlab</code> now stays in the dropdown for every future session.</p>
+<blockquote>
+<p><strong>Leave Identity File blank.</strong> It is for people who log in with an SSH key instead of a
+password. This account uses a password, so there is nothing to put there. If you later
+set up a key (Part 2.7), come back and point this field at it — after that you stop
+being asked for the password.</p>
+</blockquote>
+<h2>3.3 Start a session</h2>
+<ol>
+<li>Select <strong>pwrlab</strong> from the environment dropdown.</li>
+<li>When asked for a project folder, enter:
+   <code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code>
+   Note the forward slashes — this is a path on the node, not on your laptop.</li>
+<li>The first connection takes a minute or two while the app installs Claude Code onto the
+   node. On this account that is already done, so it should be quick.</li>
+<li>Type what you want and press Enter.</li>
+</ol>
+<p>From here on, every file Claude reads or writes and every command it runs happens <strong>on
+<code>pwrlab</code></strong>, not on your laptop.</p>
+<p>That includes running the model itself — editing the scenario, launching the solve,
+checking on it, and reading results back. <strong>Part 11.5</strong> covers how to ask for that, and the
+one thing the request must include so a long run survives you disconnecting.</p>
+<p>Requests that work well:</p>
+<ul>
+<li><em>"Change the scenario in testMultiYear.py to the 1.5 °C target with a full 365 days, and
+  show me the diff before saving."</em></li>
+<li><em>"How much free disk space is there, and which result folders are biggest?"</em></li>
+<li><em>"Read stat_national.csv from the most recent run and tell me the onshore wind capacity
+  for each decade."</em></li>
+<li><em>"The run failed — look at the error and explain what went wrong."</em></li>
+</ul>
+<p>The <strong>permission mode</strong> selector next to the send button controls how much Claude does
+without asking. <strong>Manual</strong> shows you every proposed change and waits for approval — a
+sensible default on a shared machine, and easy to relax later.</p>
+<h2>3.4 The one limitation that matters here</h2>
+<blockquote>
+<p><strong>SSH sessions have no integrated terminal.</strong> The <code>Ctrl</code> + <code>`</code> terminal pane works
+in local sessions only. There is also no <code>@mention</code> file picker.</p>
+</blockquote>
+<p>That matters for this project, because <strong>long model runs must be started inside tmux</strong> — a
+tool that keeps work running on the node after you disconnect (Part 8) — and starting it
+needs a real terminal.</p>
+<p>So use both tools side by side:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Editing scenario settings, reading results, understanding errors, exploring the code</td>
+<td><strong>Claude Code desktop app</strong></td>
+</tr>
+<tr>
+<td>Starting a multi-hour run in tmux, watching it with <code>htop</code>, reattaching later</td>
+<td><strong>A PowerShell window</strong> running <code>ssh taw021@pwrlab.ucsd.edu</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Having both open at once is fine — they are just two connections to the same machine.</p>
+<h2>3.5 If it will not connect</h2>
+<p>The best diagnostic is to try plain SSH from PowerShell:</p>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<p>If that works, the desktop app should too.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>What you see</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Permission denied</code></td>
+<td>Wrong password, or wrong username in <strong>SSH Host</strong> — it must be the full <code>taw021@pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td><code>Connection refused</code> / <code>timed out</code></td>
+<td>Cannot reach the machine — you may need the campus VPN from off-campus</td>
+</tr>
+<tr>
+<td><code>Host key verification failed</code></td>
+<td>Connect once with plain <code>ssh</code> from PowerShell, accept the fingerprint, then retry</td>
+</tr>
+<tr>
+<td>Cannot find the folder</td>
+<td>Path typo — it is <code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code>, forward slashes, capitals as shown</td>
+</tr>
+<tr>
+<td>Clicking <strong>Code</strong> offers an upgrade</td>
+<td>Your plan does not include Claude Code</td>
+</tr>
+</tbody>
+</table></div>
+<h2>3.6 Using <code>claude</code> in a terminal instead</h2>
+<p>Claude Code is also installed on the node itself (<code>/usr/bin/claude</code>). From any PowerShell
+SSH session:</p>
+<pre data-lang="terminal"><code>cd ~/AdvAppliedEnergy_Pathways_2025
+claude
+</code></pre>
+<p>The first time, it prints a URL — open it in your laptop's browser, approve, and paste the
+code back. This works fine on a machine with no screen of its own.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/help</code></td>
+<td>List everything available</td>
+</tr>
+<tr>
+<td><code>/clear</code></td>
+<td>Start a fresh conversation</td>
+</tr>
+<tr>
+<td><code>/model</code></td>
+<td>Switch model</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>Interrupt Claude mid-response</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>C</code> twice</td>
+<td>Quit</td>
+</tr>
+</tbody>
+</table></div>
+<p>For a one-off question without starting a session:</p>
+<pre data-lang="terminal"><code>claude -p &quot;summarise the errors in the last 50 lines of my model run&quot;
+</code></pre>
+<blockquote>
+<p>Claude runs commands as <strong>you</strong> on a <strong>shared machine</strong>. Read what it proposes before
+approving, particularly anything involving <code>rm</code>.</p>
+</blockquote>
+<h2>3.7 Desktop keyboard shortcuts (Windows)</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl</code> + <code>/</code></td>
+<td>Show all shortcuts</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>N</code></td>
+<td>New session</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>Tab</code></td>
+<td>Next session</td>
+</tr>
+<tr>
+<td><code>Esc</code></td>
+<td>Stop Claude's current response</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>Shift</code> + <code>D</code></td>
+<td>Toggle the diff pane</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>Shift</code> + <code>M</code></td>
+<td>Permission mode menu</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>;</code></td>
+<td>Side chat — ask something without derailing the main thread</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h1 id="sec-5">Part 4 — How the model works</h1>
+<p>You can run this model by copying commands. You will get much further if you know what it
+is doing, because then the settings mean something, the outputs mean something, and an odd
+result looks odd instead of looking like an answer.</p>
+<h2>4.1 The question it answers</h2>
+<blockquote>
+<p><em>If China's power sector must hit a given carbon budget by 2060, what is the cheapest
+combination of generation, storage and transmission that keeps the lights on in every
+province in every hour along the way?</em></p>
+</blockquote>
+<p>Every word there matters. <strong>Cheapest</strong> — this is a cost-minimisation. <strong>Every province</strong> —
+it is spatially resolved, not one national blob. <strong>Every hour</strong> — it checks supply against
+demand hour by hour, which is what makes wind and solar hard. <strong>Along the way</strong> — it solves
+2030, 2040, 2050 and 2060 in sequence, carrying capacity forward.</p>
+<h2>4.2 What "optimisation" means here</h2>
+<p>The model is a <strong>linear program</strong>, or LP. An LP has exactly three parts:</p>
+<ol>
+<li><strong>Decision variables</strong> — the numbers you are solving for. Here: how much wind to build
+   in each place, how much each plant generates in each hour, how much power flows down
+   each transmission line.</li>
+<li><strong>An objective</strong> — one number to make as small (or large) as possible. Here: total
+   system cost.</li>
+<li><strong>Constraints</strong> — rules every solution must obey. Here: demand must be met, emissions
+   must stay under the cap, you cannot build more wind than the land allows.</li>
+</ol>
+<p>"Linear" means every relationship is proportional: twice the wind farm costs twice as much
+and generates twice as much. That is a real simplification, and it is what makes a problem
+of this size solvable at all.</p>
+<p>An LP does not search or guess. Provably, the optimum of a linear program sits at a corner
+of the region carved out by the constraints, and the solver navigates to it directly. When
+Gurobi reports <code>Optimal objective</code>, that is not "the best I found" — it is "no cheaper
+solution exists under these constraints." Any result you dislike is therefore an argument
+about the constraints or the costs, never about the solver.</p>
+<h2>4.3 The decision variables in this model</h2>
+<p>Open <code>pycode/main.py</code> and search for <code>addVar</code> — every one is a quantity the model chooses.
+They fall into two groups.</p>
+<p><strong>Investment — what gets built</strong> (one number per place, per technology):</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What it decides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>x_wind[pro][c]</code>, <code>x_solar[pro][c]</code></td>
+<td>What <strong>fraction</strong> of resource cell <code>c</code> in province <code>pro</code> to develop. Bounded 0 to 1 — you cannot build 150% of a site.</td>
+</tr>
+<tr>
+<td><code>cap_gw[pro][tech]</code></td>
+<td>Capacity of each firm technology: coal, coal+CCS, CHP+CCS, gas, gas+CCS, nuclear, hydro, BECCS</td>
+</tr>
+<tr>
+<td><code>cap_phs</code>, <code>cap_bat</code>, <code>cap_lds</code></td>
+<td>Pumped hydro, batteries, long-duration storage</td>
+</tr>
+<tr>
+<td><code>cap_trans_new[pro]</code></td>
+<td>New inter-provincial transmission capacity</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Operation — what happens each hour</strong> (one number per hour, and there are 168 or 8760 of
+them):</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What it decides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>load_conv[layer][pro]</code></td>
+<td>Output of each conventional plant type</td>
+</tr>
+<tr>
+<td><code>inte_wind</code>, <code>inte_solar</code></td>
+<td>Wind and solar actually delivered (the rest is curtailed)</td>
+</tr>
+<tr>
+<td><code>charge_*</code>, <code>dischar_*</code></td>
+<td>Storage charging and discharging</td>
+</tr>
+<tr>
+<td><code>load_trans[(pro1, pro2)]</code></td>
+<td>Flow on each inter-provincial link</td>
+</tr>
+<tr>
+<td><code>ru</code>, <code>rd</code></td>
+<td>Ramping up and down — how fast plants change output</td>
+</tr>
+<tr>
+<td><code>resv_*</code></td>
+<td>Reserve capacity held back for contingencies</td>
+</tr>
+<tr>
+<td><code>load_shedding</code></td>
+<td>Unserved demand — deliberate blackout, priced punitively</td>
+</tr>
+</tbody>
+</table></div>
+<p>That last one is worth noticing. The model <em>can</em> fail to meet demand, at a very high
+penalty cost. If your results show load shedding, the system you specified was not
+buildable, and the model is telling you so rather than crashing.</p>
+<h2>4.4 The objective: one number, twenty-eight terms</h2>
+<p>At <code>main.py:783</code> the objective is assembled. It is a single sum of about 28 cost
+components — annualised capital costs plus running costs:</p>
+<pre data-lang="python"><code>interProvinModel.setObjective(gp.quicksum(wind_gen_cost) +
+                              gp.quicksum(solar_gen_cost) +
+                              ...
+                              gp.quicksum(spur_cost_wind) +      # line to the wind farm
+                              gp.quicksum(trunk_cost) +          # line to the grid
+                              gp.quicksum(trans_cost) +          # inter-provincial
+                              ...
+                              gp.quicksum(coal_cost_var))
+</code></pre>
+<p>Two things this tells you:</p>
+<ul>
+<li><strong>Transmission is costed explicitly and in three pieces</strong> — the spur line from each
+  resource cell, the trunk line to the network, and inter-provincial links. This is why
+  the model does not simply carpet the windiest province in turbines: getting the power
+  out has to pay for itself.</li>
+<li><strong>Capital costs are annualised.</strong> A wind farm's up-front cost is spread over its life
+  using a capital recovery factor (<code>getCRF</code> in <code>callUtility.py</code>), so that a one-off
+  construction cost can be compared against a year of fuel bills in the same units.</li>
+</ul>
+<h2>4.5 The constraint that does the most work</h2>
+<p>Everything turns on one equation, at <code>main.py:1004</code>. For every province and every hour,
+what arrives must exactly equal what is demanded:</p>
+<pre data-lang="terminal"><code>  coal + coal_CCS + CHP_CCS + gas + nuclear + hydro
++ BECCS
++ imports from other provinces × (1 − transmission losses)
++ wind delivered + solar delivered
++ storage discharged × round-trip efficiency
++ load shedding
+==
+demand in that province in that hour
+</code></pre>
+<p>It is an equality, not "greater than or equal". Electricity cannot be stockpiled in the
+wires: generation and consumption balance continuously. That single line is the reason
+storage and transmission get built at all — they are how the model moves energy across
+<em>time</em> and across <em>space</em> to satisfy an equation that must hold in all 8,760 hours at once.</p>
+<p>Other constraints that shape the answer:</p>
+<ul>
+<li><strong>The emission cap</strong> (<code>main.py:1277</code>) reads <code>data_csv/capacity_assumptions/power_sector_emission_2C.csv</code>
+  or <code>_15C.csv</code>. This is the climate target, and it is the constraint your <code>emission_target</code>
+  setting switches between.</li>
+<li><strong>Storage must end where it started</strong>: <code>tot_energy_phs[pro][0] == tot_energy_phs[pro][hour_end]</code>.
+  Without this the model would cheat by starting the week with a full battery it never paid
+  for.</li>
+<li><strong>Policy floors and ceilings</strong> on nuclear, hydro, coal and pumped hydro, from the
+  <code>data_csv/capacity_assumptions/</code> files — what policy has already committed to, and what
+  is physically or politically off the table.</li>
+<li><strong>Reserves</strong>: spare capacity held each hour against forecast error and outages, which is
+  why the model builds more than peak demand.</li>
+</ul>
+<h2>4.6 Why the problem is enormous</h2>
+<p>Multiply it out. Roughly 30 provinces × 8,760 hours × a few dozen operational variables per
+province-hour, plus one variable for every wind and solar resource cell in the country —
+and <code>data_pkl/wind_cell_2015.pkl</code> alone is 1.1 GB of cells.</p>
+<p>That is <strong>millions of variables and millions of constraints</strong>, all coupled: hour 4,000's
+battery level depends on hour 3,999's, which depends on what you built in 2030. This is why
+the run needs ~10 GB of RAM and why it is on a 187 GB server rather than a laptop.</p>
+<h2>4.7 Why 7 days instead of 365</h2>
+<p><code>optimization_days</code> controls how many days of the year are actually simulated.
+<code>data_csv/simulation_meta/hour_seed.csv</code> picks which hours those are — a representative
+sample spread across the year rather than one arbitrary week.</p>
+<p>The trade-off is honest and worth understanding:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>7 days (168 hours)</th>
+<th>365 days (8,760 hours)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Runtime</td>
+<td>~30 minutes</td>
+<td>up to ~20 hours</td>
+</tr>
+<tr>
+<td>Captures daily cycles</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Captures seasonal storage</td>
+<td><strong>no</strong></td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Captures rare stress events</td>
+<td><strong>no</strong></td>
+<td>yes</td>
+</tr>
+</tbody>
+</table></div>
+<p>A week cannot see a still, cold fortnight in January. Since those events are exactly what
+determines how much firm capacity and long-duration storage you need, <strong>7-day results
+systematically under-build for reliability</strong>. Use them to check that a run works, not to
+draw conclusions.</p>
+<h2>4.8 Why the decades chain</h2>
+<p><code>testMultiYear.py</code> solves 2030 first, then feeds its answer into 2040 as a starting
+condition, and so on. <code>multiYearAutomation.py</code> does the plumbing.</p>
+<p>This matters because <strong>capacity is sticky</strong>. A wind farm built in 2030 is still standing in
+2040; the model cannot un-build it. Each decade's constraints therefore include "at least
+as much renewable capacity as last decade left behind" — which is why the answer to "what
+should 2060 look like?" depends on what you did in 2030. That path dependence is the point
+of the paper.</p>
+<p>You can see it in the log at the start of each period:</p>
+<pre data-lang="terminal"><code>Initial conditions for 2030 -- solar installed GW: 278.19
+Initial conditions for 2030 -- wind installed GW: 282.86
+</code></pre>
+<p>Those are 2020's real, already-built capacities, and they are where 2030 starts from.</p>
+<h2>4.9 What the solver is doing</h2>
+<p>At <code>main.py:347</code>:</p>
+<pre data-lang="python"><code>interProvinModel.setParam('Method', 2)      # barrier
+interProvinModel.setParam('Crossover', 0)   # skip crossover
+</code></pre>
+<p><strong>Method 2 is the barrier (interior-point) algorithm.</strong> The classic LP algorithm, simplex,
+walks along the edges of the feasible region from corner to corner. Barrier instead drives
+straight through the middle, approaching the optimum from the inside. On problems with
+millions of variables barrier is dramatically faster, and it parallelises across cores
+where simplex largely does not.</p>
+<p><strong>Crossover = 0 turns off the clean-up step</strong> that would convert barrier's interior answer
+into an exact corner solution. That step is slow and this model does not need the exact
+corner — a solution very slightly inside the boundary is fine for capacity planning.</p>
+<p>So a healthy run looks like this:</p>
+<pre data-lang="terminal"><code>Barrier solved model in 70 iterations and 50.72 seconds (61.06 work units)
+Optimal objective 1.86776063e+05
+</code></pre>
+<p>Iterations in the tens, not thousands. If you ever see iteration counts climbing into the
+hundreds with little progress, the problem is badly conditioned — usually a cost or bound
+set to an extreme value.</p>
+<h2>4.10 Reading the objective value</h2>
+<p><code>Optimal objective 1.86776063e+05</code> is the <strong>total annualised system cost</strong> for that decade,
+in the model's cost units (hundred million yuan). On its own the number means little. It is
+useful <strong>comparatively</strong>: run two scenarios and the difference in objective is the cost of
+the policy you changed. That is the single most useful thing the model produces, and it is
+why scenarios are always run in pairs.</p>
+<p>Two cautions:</p>
+<ul>
+<li>Objectives from different <code>optimization_days</code> are <strong>not comparable</strong> — 7 days and 365
+  days cost out different amounts of energy.</li>
+<li>A <em>lower</em> cost is not automatically a <em>better</em> outcome. A cheap run that sheds load, or
+  that was given a lax emission cap, is cheap for a reason. Always read <code>stat_national.csv</code>
+  alongside the objective.</li>
+</ul>
+<hr />
+<h1 id="sec-6">Part 5 — How the machine works</h1>
+<p>Four ideas explain almost everything you will run into on this node: the filesystem, the
+process, memory, and the environment. Each one turns a rule you would otherwise memorise
+into something you can reason about.</p>
+<h2>5.1 The filesystem is one tree</h2>
+<p>Windows has several drives — <code>C:</code>, <code>D:</code>, a USB stick. Linux has exactly one tree, starting
+at <code>/</code>, and everything hangs off it. There is no drive letter anywhere.</p>
+<pre data-lang="terminal"><code>/                     the root of everything
+├── home/             all user accounts
+│   ├── taw021/       ← you. Written &quot;~&quot; for short.
+│   └── someone_else/ ← a colleague. You cannot read this.
+├── opt/gurobi1101/   the Gurobi solver, installed for everyone
+├── usr/bin/          programs everyone can run: python3, git, tmux, nano
+└── tmp/              scratch space, wiped on reboot
+</code></pre>
+<p>Two rules follow, and they explain most "Permission denied" messages:</p>
+<ul>
+<li><strong>You can write inside <code>/home/taw021</code> and almost nowhere else.</strong> Not <code>/usr</code>, not <code>/opt</code>,
+  not another person's home. That is not a restriction aimed at you — it is what stops
+  fourteen users breaking each other's work.</li>
+<li><strong>Installing software normally means writing to <code>/usr</code>,</strong> which you cannot do. That is
+  precisely why this project's Python lives in a folder inside your home directory instead
+  (§5.5).</li>
+</ul>
+<p>Every file carries an owner and a permission string. In <code>ls -l</code>:</p>
+<pre data-lang="terminal"><code>-rw-rw-r-- 1 taw021 taw021 497 Sep 13 07:04 gurobi.lic
+ │└┬┘└┬┘└┬┘  └──┬─┘
+ │ │  │  │      └── owner
+ │ │  │  └───────── everyone else: read only
+ │ │  └──────────── owner's group: read + write
+ │ └─────────────── owner: read + write
+ └───────────────── &quot;-&quot; = file, &quot;d&quot; = directory
+</code></pre>
+<h2>5.2 A process is a running program</h2>
+<p>When you type <code>python testMultiYear.py</code>, Linux creates a <strong>process</strong>: a copy of the program
+with its own memory, its own open files, and a number called a PID. <code>htop</code> lists them.</p>
+<p>Processes have parents. Your shell is a process; the Python you launch from it is its
+child. <strong>This is the whole reason tmux exists</strong>, so it is worth following the chain:</p>
+<pre data-lang="terminal"><code>sshd (the SSH server)
+└── bash (your shell)
+    └── python testMultiYear.py (your run)
+</code></pre>
+<p>When your connection drops, <code>sshd</code> goes away. Linux sends every process in that session a
+hang-up signal — <code>SIGHUP</code> — and the default response to <code>SIGHUP</code> is to die. Your shell
+dies, and it takes its children with it. Your twelve-hour run is gone, mid-solve, with
+nothing written.</p>
+<p>tmux breaks the chain. The tmux <strong>server</strong> is not a child of your SSH session:</p>
+<pre data-lang="terminal"><code>sshd ──── tmux client ╌╌╌ (detachable link)
+                          tmux server ← owned by the system, not your connection
+                          └── bash
+                              └── python testMultiYear.py
+</code></pre>
+<p>Detaching disconnects the client. The server never receives <code>SIGHUP</code>, so your run never
+notices you left. This is why "always use tmux" is not superstition — it is the one thing
+that decouples your work from your network connection.</p>
+<p>You can watch this yourself:</p>
+<pre data-lang="terminal"><code>ps -ef --forest | grep -A3 sshd     # see the parent/child chain
+ps -eo pid,etime,rss,cmd | grep python
+</code></pre>
+<h2>5.3 Memory is not disk</h2>
+<p>Two different numbers, constantly confused, and the confusion causes real failures.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>RAM (memory)</th>
+<th>Disk (storage)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Size here</td>
+<td>187 GB</td>
+<td>98 GB, ~8 GB free</td>
+</tr>
+<tr>
+<td>Holds</td>
+<td>what is running <em>right now</em></td>
+<td>files, permanently</td>
+</tr>
+<tr>
+<td>Emptied when</td>
+<td>the process ends</td>
+<td>never, until you delete</td>
+</tr>
+<tr>
+<td>Check with</td>
+<td><code>free -h</code></td>
+<td><code>df -h /</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The solver builds the entire LP — millions of variables and constraints — <strong>in RAM</strong>. That
+is the ~10 GB you see next to the python process in <code>htop</code>. None of it is on disk; if the
+process dies, it is simply gone.</p>
+<p>When RAM runs out, Linux starts <strong>swapping</strong>: moving memory onto disk to free space. Disk
+is thousands of times slower than RAM, so a job that starts swapping does not fail, it
+crawls — sometimes by a factor of a hundred. The symptom is distinctive and worth knowing:
+in <code>htop</code>, CPU drops toward zero while the job is clearly still running. That is a swapping
+job, and it is usually faster to kill it and run something smaller.</p>
+<h2>5.4 Cores, and what "shared" really means</h2>
+<p>This node has <strong>72 cores</strong>. One core runs one thread at a time, so 72 things can genuinely
+happen at once. In <code>htop</code>, <code>100%</code> means one core fully busy — <code>1600%</code> means sixteen.</p>
+<p><code>uptime</code> gives a <strong>load average</strong>: how many processes wanted CPU over the last 1, 5 and 15
+minutes.</p>
+<pre data-lang="terminal"><code>load average: 0.00, 0.00, 0.00     ← idle, help yourself
+load average: 12.4, 11.8, 9.2      ← busy but fine on 72 cores
+load average: 68.1, 70.3, 71.5     ← saturated; wait
+</code></pre>
+<p>Gurobi's barrier algorithm parallelises well and will take every core it is offered. On a
+machine with no scheduler — and this one has none, no Slurm, no queue — nothing stops you
+taking all 72 and leaving thirteen colleagues waiting. Part 14 covers how to be a good
+neighbour; the point here is that the machine will not stop you, so the judgement is yours.</p>
+<h2>5.5 Why this project has its own private Python</h2>
+<p>The node's own Python is 3.12. This model needs 3.9 — its pinned <code>pandas 1.5.3</code> will not
+even build on 3.12. You cannot install Python 3.9 system-wide because you cannot write to
+<code>/usr</code>.</p>
+<p>A <strong>virtual environment</strong> solves this. <code>.venv/</code> is an ordinary folder in the project
+containing its own Python interpreter and its own packages:</p>
+<pre data-lang="terminal"><code>.venv/
+├── bin/python      ← Python 3.9.25, just for this project
+└── lib/python3.9/site-packages/     ← pandas 1.5.3, gurobipy, geopandas...
+</code></pre>
+<p>"Activating" it does something almost trivial: it puts <code>.venv/bin</code> at the front of your
+<code>PATH</code>, the list of folders the shell searches for commands. After that, typing <code>python</code>
+finds <code>.venv/bin/python</code> before <code>/usr/bin/python3</code>. That is all. Nothing is installed,
+nothing global changes, and other users are unaffected.</p>
+<p>You can see it directly:</p>
+<pre data-lang="terminal"><code>which python                     # /usr/bin/python3  — before
+source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+which python                     # .../.venv/bin/python  — after
+</code></pre>
+<p>This is also why forgetting to activate gives <code>ModuleNotFoundError: No module named
+'pandas'</code>. Nothing is broken — you are simply talking to the <em>other</em> Python, which has
+never heard of this project.</p>
+<h2>5.6 The environment: settings a process inherits</h2>
+<p>Every process is handed a set of <strong>environment variables</strong> by its parent. <code>env.sh</code> sets
+three of them, and each fixes a specific failure:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>What it does</th>
+<th>What breaks without it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PATH</code></td>
+<td>Where the shell looks for commands</td>
+<td><code>python</code> means 3.12, not 3.9</td>
+</tr>
+<tr>
+<td><code>PYTHONPATH</code></td>
+<td>Extra folders Python searches for imports</td>
+<td><code>ModuleNotFoundError: No module named 'pycode'</code> — because <code>plotResult.py</code> says <code>from pycode.callUtility import ...</code></td>
+</tr>
+<tr>
+<td><code>MPLBACKEND=Agg</code></td>
+<td>Tells matplotlib to draw to files, not a window</td>
+<td>Plotting crashes: there is no screen on a server</td>
+</tr>
+<tr>
+<td><code>GRB_LICENSE_FILE</code></td>
+<td>Where Gurobi finds its licence</td>
+<td>Only needed if the licence is not in <code>~</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Inspect them any time:</p>
+<pre data-lang="terminal"><code>echo $PATH
+echo $PYTHONPATH
+env | sort | less        # everything (q to quit)
+</code></pre>
+<p>And the reason you must type <code>source env.sh</code> rather than <code>bash env.sh</code>: a variable set by a
+child process dies with that child. <code>bash env.sh</code> would start a new shell, set the
+variables there, and exit — taking them with it. <code>source</code> runs the commands <strong>in your
+current shell</strong>, so the changes stick. That distinction catches everyone once.</p>
+<hr />
+<h1 id="sec-7">Part 6 — Working in the terminal</h1>
+<p>This part covers the terminal itself. Most of it maps onto things you already do in File
+Explorer — opening folders, copying files, checking how much space is left. The difference
+is that you type the instruction instead of clicking it.</p>
+<h2>6.1 Reading the prompt</h2>
+<pre data-lang="terminal"><code>taw021@pwrlab:~/AdvAppliedEnergy_Pathways_2025$
+│      │       │                              │
+│      │       │                              └─ ready for input
+│      │       └─ which folder you are currently &quot;in&quot;
+│      └─ which machine you are on
+└─ who you are
+</code></pre>
+<p>The "which folder you are in" part is the one that matters. In a graphical file manager,
+the folder you are looking at is obvious because you can see it. In a terminal, you only
+have this line to tell you — and commands act on wherever you currently are, so it is
+worth a glance before you run something.</p>
+<p>The <code>~</code> symbol is shorthand for your home folder, <code>/home/taw021</code>. So <code>~/Advanced...</code>
+means <code>/home/taw021/Advanced...</code>.</p>
+<h2>6.2 Paths — how to name a location</h2>
+<p>A path is an address for a file or folder. Folders are separated by forward slashes <code>/</code>.</p>
+<ul>
+<li><strong>Absolute path</strong> — starts at the root of the whole drive with <code>/</code>, and is therefore
+  unambiguous from anywhere: <code>/home/taw021/AdvAppliedEnergy_Pathways_2025/pycode/main.py</code></li>
+<li><strong>Relative path</strong> — starts from wherever you currently are: <code>pycode/main.py</code></li>
+<li><code>.</code> means "the folder I'm in right now"</li>
+<li><code>..</code> means "the folder one level up"</li>
+<li><code>~</code> means "my home folder"</li>
+</ul>
+<p>When in doubt, use absolute paths. They always work.</p>
+<h2>6.3 The commands you will genuinely use</h2>
+<p><strong>Where am I?</strong></p>
+<pre data-lang="terminal"><code>pwd
+</code></pre>
+<p>Prints the working directory. When you are lost, this is the answer.</p>
+<p><strong>What's here?</strong></p>
+<pre data-lang="terminal"><code>ls
+</code></pre>
+<p>Lists files and folders. More useful variants:</p>
+<pre data-lang="terminal"><code>ls -l
+</code></pre>
+<p>Long format — shows size, date modified, permissions, one per line.</p>
+<pre data-lang="terminal"><code>ls -lh
+</code></pre>
+<p>Same but with human-readable sizes (<code>4.2G</code> instead of <code>4509715660</code>).</p>
+<pre data-lang="terminal"><code>ls -la
+</code></pre>
+<p>Also shows hidden files. On Linux any file whose name starts with a dot is hidden;
+configuration files are hidden by convention. <code>.venv</code> and <code>.bashrc</code> are examples.</p>
+<p><strong>Go somewhere</strong></p>
+<pre data-lang="terminal"><code>cd AdvAppliedEnergy_Pathways_2025
+</code></pre>
+<p>Change directory. Some shortcuts:</p>
+<pre data-lang="terminal"><code>cd ..          # go up one level
+cd ~           # go to my home folder
+cd             # also goes home (bare cd)
+cd -           # go back to where I just was
+</code></pre>
+<p><strong>Look at a file without opening an editor</strong></p>
+<pre data-lang="terminal"><code>cat notes.txt        # dump the whole file to the screen
+head -20 notes.txt   # just the first 20 lines
+tail -20 notes.txt   # just the last 20 lines
+less notes.txt       # scroll through it: arrows to move, q to quit, /word to search
+</code></pre>
+<p><code>less</code> is the right choice for anything long. Remember: <strong><code>q</code> quits</strong>.</p>
+<p><strong>Make a folder</strong></p>
+<pre data-lang="terminal"><code>mkdir my_new_folder
+</code></pre>
+<p><strong>Copy, move, rename</strong></p>
+<pre data-lang="terminal"><code>cp source.csv backup.csv          # copy a file
+cp -r folder1 folder2             # copy a whole folder (-r = recursive)
+mv oldname.csv newname.csv        # rename
+mv results.csv ~/archive/         # move into another folder
+</code></pre>
+<p>Note there is no separate "rename" command — renaming is just moving something to a new
+name in the same place.</p>
+<p><strong>Delete</strong></p>
+<pre data-lang="terminal"><code>rm unwanted.csv        # delete a file
+rm -r unwanted_folder  # delete a folder and everything in it
+</code></pre>
+<blockquote class="danger">
+<p><strong><code>rm</code> is permanent.</strong> There is no Recycle Bin, no undo, no undelete, and no "are you
+sure?" prompt. Before you press Enter on any <code>rm</code> command, read the whole line again.</p>
+<p>Never, under any circumstances, type <code>rm -rf /</code> or <code>rm -rf ~</code>. The first tries to erase
+the entire machine; the second erases everything you own.</p>
+<p>A safer habit: run <code>ls</code> with the same target first. If <code>ls ~/data_res/old_run_*</code> shows
+exactly the things you meant, then <code>rm -r ~/data_res/old_run_*</code> is safe.</p>
+</blockquote>
+<p><strong>How much space is left?</strong></p>
+<pre data-lang="terminal"><code>df -h /              # free space on the whole drive
+du -sh ~/*           # how big is each thing in my home folder
+ncdu ~               # interactive space explorer — arrows to navigate, q to quit
+</code></pre>
+<p><code>ncdu</code> is excellent for hunting down what is eating your disk.</p>
+<h2>6.4 The four keyboard tricks that change everything</h2>
+<p>These four do most of the work of making the terminal quick to use.</p>
+<p><strong>1. <code>Tab</code> completes what you are typing.</strong>
+Type <code>cd AdvA</code> and press <code>Tab</code> — it fills in the rest of <code>AdvAppliedEnergy_Pathways_2025/</code>.
+If several things match, press <code>Tab</code> twice to see the options. This saves enormous amounts
+of typing and, more importantly, <strong>prevents typos in filenames</strong>. Use it constantly.</p>
+<p><strong>2. <code>↑</code> and <code>↓</code> scroll through your past commands.</strong>
+Press up-arrow to bring back the last thing you typed, edit it, press Enter. You almost
+never need to retype a long command.</p>
+<p><strong>3. <code>Ctrl</code> + <code>R</code> searches your history.</strong>
+Press <code>Ctrl+R</code>, start typing any fragment of a command you ran days ago, and it appears.
+Press Enter to run it, or arrow keys to edit it first.</p>
+<p><strong>4. <code>Ctrl</code> + <code>C</code> stops whatever is running.</strong>
+Your emergency brake. If something is spewing text, hanging, or you started it by
+mistake, <code>Ctrl+C</code> stops it and hands the prompt back.</p>
+<h2>6.5 A few more keys worth knowing</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl</code> + <code>C</code></td>
+<td>Stop the running command</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>D</code></td>
+<td>Log out / end input</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>L</code></td>
+<td>Clear the screen (same as typing <code>clear</code>)</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>A</code></td>
+<td>Jump to the start of the line you are typing</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>E</code></td>
+<td>Jump to the end of the line</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>U</code></td>
+<td>Delete everything before the cursor</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>K</code></td>
+<td>Delete everything after the cursor</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>W</code></td>
+<td>Delete the previous word</td>
+</tr>
+<tr>
+<td><code>Alt</code>/<code>Option</code> + <code>←</code> <code>→</code></td>
+<td>Move one word at a time</td>
+</tr>
+</tbody>
+</table></div>
+<h2>6.6 Getting help on any command</h2>
+<pre data-lang="terminal"><code>man ls        # the full manual for ls (press q to quit)
+ls --help     # a shorter summary
+</code></pre>
+<h2>6.7 Case and spaces matter</h2>
+<p><code>Data_res</code> and <code>data_res</code> are two different folders on Linux. And a space separates
+arguments, so a filename with a space in it must be quoted:</p>
+<pre data-lang="terminal"><code>ls &quot;my results.csv&quot;
+</code></pre>
+<p>This is why you should avoid spaces in filenames you create. Use underscores.</p>
+<hr />
+<h1 id="sec-8">Part 7 — Where everything lives on this account</h1>
+<p>Log in and run <code>ls ~/AdvAppliedEnergy_Pathways_2025</code>. Here is what each thing is.</p>
+<pre data-lang="terminal"><code>/home/taw021/                              ← your home folder (&quot;~&quot;)
+└── AdvAppliedEnergy_Pathways_2025/        ← the model. Everything happens here.
+    │
+    ├── env.sh                  ← ⭐ run this before every session (see Part 11)
+    ├── README.md               ← the original authors' documentation
+    ├── SETUP_ADMIN_REQUEST.md  ← notes on what the admin still needs to do
+    ├── requirements-core.txt   ← list of Python packages (solver side)
+    ├── requirements-geo.txt    ← list of Python packages (maps and plots)
+    │
+    ├── .venv/                  ← the private Python installation. Never edit by hand.
+    │
+    ├── pycode/                 ← ⭐ all the model code, and where you run things from
+    │   ├── testMultiYear.py    ← ⭐ the script you will usually run
+    │   ├── testSingleYear.py   ←   same, but one period only
+    │   ├── main.py             ←   the actual optimisation model
+    │   ├── initData.py         ←   prepares input data
+    │   ├── clearupData.py      ←   post-processes raw results
+    │   ├── multiYearAutomation.py ← chains one decade's output into the next decade's input
+    │   ├── callUtility.py      ←   shared helper functions
+    │   ├── obtainPrice.py      ←   derives electricity prices from results
+    │   └── plotResult.py       ←   draws the maps and charts
+    │
+    ├── data_csv/               ← small inputs, stored in the repository
+    │   ├── capacity_assumptions/   ← how much coal/gas/nuclear/hydro is allowed
+    │   ├── cost_assumptions/       ← technology capital and operating costs
+    │   ├── demand_assumptions/     ← projected electricity demand by province
+    │   ├── geography/              ← provincial and county geography
+    │   ├── transmission_assumptions/ ← inter-provincial line capacities
+    │   ├── vre_installations/      ← existing wind and solar
+    │   ├── vre_potentials/         ← how much wind and solar could be built
+    │   ├── simulation_meta/        ← which hours to simulate
+    │   └── scen_params_template.json ← default scenario settings
+    │
+    ├── data_pkl/    ← 3.3 GB of wind/solar resource data, from Zenodo
+    ├── data_shp/    ← 42 MB of map shapes, from Zenodo
+    ├── data_mat/    ← 868 MB of MATLAB matrices, from Zenodo
+    │
+    ├── data_res/    ← ⭐ YOUR RESULTS APPEAR HERE, one folder per run
+    │
+    └── figures_for_papers/ ← the published figures and the notebook that drew them
+</code></pre>
+<h2>7.1 Everything is ready</h2>
+<p>Nothing is outstanding. For the record, all three of the things that usually block a setup
+like this are done:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Zenodo input data</strong></td>
+<td><code>data_pkl</code> (3.3 GB), <code>data_mat</code> (868 MB), <code>data_shp</code> (42 MB) — downloaded and checksum-verified against Zenodo's published MD5</td>
+</tr>
+<tr>
+<td><strong>Python environment</strong></td>
+<td>Python 3.9.25 with every pinned package, in <code>.venv</code></td>
+</tr>
+<tr>
+<td><strong>Gurobi licence</strong></td>
+<td>Academic licence installed at <code>~/gurobi.lic</code>, valid until <strong>13 September 2027</strong></td>
+</tr>
+</tbody>
+</table></div>
+<h3>About the solver licence</h3>
+<p>Gurobi is the commercial solver that does the actual optimisation, and this model has no
+open-source alternative — <code>main.py</code> calls <code>gurobipy</code> directly. The licence is installed and
+working; you do not need to do anything.</p>
+<p>Two details worth knowing, because they will matter eventually:</p>
+<ul>
+<li><strong>It expires on 13 September 2027.</strong> After that, every run stops with
+  <code>GurobiError: License expired</code> until it is renewed.</li>
+<li><strong>It is a named-user licence, locked to this machine and this account.</strong> It works for
+  <code>taw021</code> on <code>pwrlab</code> and nowhere else. If a colleague wants to run the model on this
+  node under their own account, they need their own key from
+  https://www.gurobi.com/academia/academic-program-and-licenses/ — yours will not work for
+  them.</li>
+</ul>
+<p>The system also has a full Gurobi 11.0.1 installation at <code>/opt/gurobi1101/</code>. You do not
+need it; the model uses the copy inside <code>.venv</code>. If you ever want its command-line tools,
+note that they fail with <code>libgurobi110.so: cannot open shared object file</code> unless you set:</p>
+<pre data-lang="terminal"><code>export LD_LIBRARY_PATH=/opt/gurobi1101/linux64/lib
+</code></pre>
+<h3>The one thing that is tight</h3>
+<p><strong>Disk.</strong> Under 9 GB free, shared with thirteen other people. A full four-decade 7-day run
+needs upwards of 10 GB of working space, so it does not currently fit — one such run
+exhausted the disk on 13 September 2026 and had to be killed. Part 14 covers this;
+<code>SETUP_ADMIN_REQUEST.md</code> is a ready-made note asking the administrator for a scratch
+volume.</p>
+<h2>7.2 What has been set up for you</h2>
+<p>You do not need to install anything. Already done:</p>
+<ul>
+<li><strong>Python 3.9.25</strong> in a self-contained "virtual environment" at <code>.venv</code>. The system's own
+  Python is version 3.12, which is too new for this model's pinned packages, so a private
+  3.9 was installed just for this project. It does not interfere with anything else.</li>
+<li><strong>All required packages</strong>: <code>numpy</code>, <code>pandas</code>, <code>scipy</code>, <code>gurobipy</code>, <code>geopandas</code>,
+  <code>shapely</code>, <code>matplotlib</code>, <code>geoplot</code>, <code>mapclassify</code>, <code>plotly</code> and a few others.</li>
+<li><strong><code>env.sh</code></strong>, a one-line shortcut that switches everything on correctly.</li>
+</ul>
+<h3>What a "virtual environment" is, in one paragraph</h3>
+<p>Different Python projects need different, often conflicting, versions of the same
+packages. A virtual environment is a private folder containing one project's own copy of
+Python and its own packages, isolated from everything else on the machine. "Activating"
+it just means <em>for this terminal window, the word <code>python</code> should mean the one in that
+folder</em>. That is all <code>env.sh</code> does. If you forget to activate it, you get the system
+Python 3.12, which does not have any of the model's packages, and you get
+<code>ModuleNotFoundError</code>.</p>
+<hr />
+<h1 id="sec-9">Part 8 — tmux: the single most important tool here</h1>
+<h2>8.1 The problem</h2>
+<p>Part 5.2 explains the mechanism: your run is a child process of your SSH session, so when
+the connection ends Linux sends <code>SIGHUP</code> down the chain and the run dies with it. This part
+is the practical consequence.</p>
+<p>Model runs take hours — the quick demo takes about 30 minutes, and a full-year scenario
+can take the better part of a day. If you start a run the normal way and then:</p>
+<ul>
+<li>close your laptop, or</li>
+<li>lose wifi for ten seconds, or</li>
+<li>your laptop goes to sleep, or</li>
+<li>you accidentally close the terminal window,</li>
+</ul>
+<p>...then your SSH connection ends, and the node kills your run instantly. Hours of
+computation, gone, with no partial results.</p>
+<h2>8.2 The solution</h2>
+<p><strong>tmux</strong> creates a session that lives <em>on the node itself</em>, independent of your
+connection. You attach to it to look at it, and detach to walk away. The work keeps
+running. You can reconnect from a different computer entirely, days later, and pick up
+exactly where you left off.</p>
+<p><strong>Use tmux for every single model run. No exceptions.</strong></p>
+<h2>8.3 The complete workflow</h2>
+<p><strong>Step 1 — connect to the node as usual.</strong></p>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<p><strong>Step 2 — start a named session.</strong> Give it a name describing what you're doing:</p>
+<pre data-lang="terminal"><code>tmux new -s modelrun
+</code></pre>
+<p>The screen clears and a green status bar appears at the bottom. You are now <em>inside</em> the
+tmux session.</p>
+<p><strong>Step 3 — start your work.</strong> Anything you like:</p>
+<pre data-lang="terminal"><code>source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+python testMultiYear.py
+</code></pre>
+<p><strong>Step 4 — detach and walk away.</strong> Press:</p>
+<blockquote>
+<p><code>Ctrl</code> + <code>B</code>, then release both keys, then press <code>D</code></p>
+</blockquote>
+<p>This is the tmux convention: <code>Ctrl+B</code> is the "attention" signal, and the next key is the
+actual command. You will see <code>[detached]</code> and be back at the ordinary prompt. <strong>Your run
+is still going.</strong> You can now safely type <code>exit</code>, close your laptop, and go home.</p>
+<p><strong>Step 5 — come back later.</strong> Reconnect by SSH, then:</p>
+<pre data-lang="terminal"><code>tmux attach -t modelrun
+</code></pre>
+<p>You are looking at your run again, exactly as you left it, with all the output it has
+produced in the meantime.</p>
+<p><strong>Step 6 — when the work is finished</strong>, type <code>exit</code> inside the session to close it down.</p>
+<h2>8.4 tmux commands worth knowing</h2>
+<p>Run these at the ordinary prompt:</p>
+<pre data-lang="terminal"><code>tmux ls                  # list all my sessions and whether they're attached
+tmux new -s NAME         # start a new named session
+tmux attach -t NAME      # reconnect to a session
+tmux attach              # reconnect to the most recent one
+tmux kill-session -t NAME  # forcibly end a session
+</code></pre>
+<p>And these are pressed <em>inside</em> a session, always starting with <code>Ctrl+B</code>:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Press</th>
+<th>Then</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>D</code></td>
+<td><strong>Detach</strong> — leave it running, go back to normal prompt</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>C</code></td>
+<td>Create a new window (like a browser tab)</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>N</code> / <code>P</code></td>
+<td>Next / previous window</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>0</code>–<code>9</code></td>
+<td>Jump straight to window number N</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>"</code></td>
+<td>Split the screen top/bottom</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>%</code></td>
+<td>Split the screen left/right</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td>arrow keys</td>
+<td>Move between split panes</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>[</code></td>
+<td><strong>Scroll mode</strong> — arrows/PageUp to scroll back, <code>q</code> to exit</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>?</code></td>
+<td>Show all keybindings</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code></td>
+<td><code>,</code></td>
+<td>Rename the current window</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>The one that catches everyone out:</strong> inside tmux, your mouse scroll wheel may not
+scroll the history. To look back at earlier output, press <code>Ctrl+B</code> then <code>[</code>, scroll with
+the arrow keys or PageUp, then press <code>q</code> to return to normal.</p>
+</blockquote>
+<p>A genuinely useful habit is to split the screen: <code>Ctrl+B</code> then <code>"</code>, run the model in the
+top pane, and run <code>htop</code> in the bottom pane to watch CPU and memory as it goes.</p>
+<h2>8.5 The alternative if you forget</h2>
+<p>If you started a long job <em>without</em> tmux and realise your mistake, you can rescue it:
+press <code>Ctrl+Z</code> to suspend it, then type <code>bg</code> to resume it in the background, then
+<code>disown</code>. This is a patch, not a fix — you lose the ability to see its output. Just use
+tmux from the start.</p>
+<hr />
+<h1 id="sec-10">Part 9 — Editing files on the node</h1>
+<p>To change which scenario the model runs, you have to edit a Python file. There is no
+graphical editor on the node, so you use a text editor that runs inside the terminal.
+<strong>nano</strong> is the one to use: it lists its own shortcuts along the bottom of the screen.</p>
+<h2>9.1 Using nano</h2>
+<p>Open a file (it is created if it doesn't exist):</p>
+<pre data-lang="terminal"><code>nano ~/AdvAppliedEnergy_Pathways_2025/pycode/testMultiYear.py
+</code></pre>
+<p>You get the file contents and a two-line menu at the bottom. Move around with the <strong>arrow
+keys</strong>, type to insert text, <code>Backspace</code> to delete.</p>
+<p>In nano's menu, <code>^</code> means the <code>Ctrl</code> key. So <code>^O</code> means <code>Ctrl+O</code>.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl</code> + <code>O</code>, then <code>Enter</code></td>
+<td><strong>Save</strong> (it calls this "write out")</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>X</code></td>
+<td><strong>Exit</strong> (it will offer to save if you have changes)</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>W</code></td>
+<td>Search for text — type a word, press Enter</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>\</code></td>
+<td>Search and replace</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>K</code></td>
+<td>Cut the current line</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>U</code></td>
+<td>Paste the cut line</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>_</code></td>
+<td>Go to a specific line number</td>
+</tr>
+<tr>
+<td><code>Alt</code> + <code>N</code></td>
+<td>Toggle line numbers on (or start nano with <code>nano -l file</code> — see below)</td>
+</tr>
+<tr>
+<td><code>Ctrl</code> + <code>G</code></td>
+<td>Help</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>The save-and-quit sequence is <code>Ctrl+O</code>, <code>Enter</code>, <code>Ctrl+X</code>.</strong> You will use it constantly.</p>
+<p>Because you will often be told "the error is on line 347", it is worth opening files with
+line numbers already switched on:</p>
+<pre data-lang="terminal"><code>nano -l ~/AdvAppliedEnergy_Pathways_2025/pycode/main.py
+</code></pre>
+<p>The <code>-l</code> flag works on every version of nano. (This node has nano 7.2.)</p>
+<h2>9.2 A warning about Python and indentation</h2>
+<p>Python uses indentation — the spaces at the start of a line — to decide what belongs
+inside what. Changing the leading spaces on a line changes the meaning of the program, and
+usually breaks it with an <code>IndentationError</code>.</p>
+<p>So when you edit the model's settings, <strong>change only the value to the right of the <code>=</code>
+sign.</strong> Do not add or remove spaces at the beginning of a line, and do not press Tab.</p>
+<h2>9.3 If you would rather not use a terminal editor at all</h2>
+<p>Two good alternatives:</p>
+<ul>
+<li><strong>VS Code with the Remote-SSH extension</strong> (free, on your laptop) gives you a completely
+  normal graphical editor whose files happen to live on the node. Install VS Code, install
+  the "Remote - SSH" extension, press <code>F1</code>, choose "Remote-SSH: Connect to Host", enter
+  <code>taw021@pwrlab.ucsd.edu</code>. This is the most comfortable option by a wide margin.</li>
+<li><strong>Claude Code</strong> — see Part 3.</li>
+</ul>
+<hr />
+<h1 id="sec-11">Part 10 — Moving files between your laptop and the node</h1>
+<p>Remember Part 1: these are separate computers. Results you generate on the node stay on
+the node until you deliberately copy them across.</p>
+<p><strong>Run all of these commands on your laptop, in a terminal that is <em>not</em> logged in to the
+node.</strong> They are how your laptop reaches out to the node, so if you are already on the
+node they will not work.</p>
+<h2>10.1 scp — copy one thing</h2>
+<p>The pattern is <code>scp &lt;from&gt; &lt;to&gt;</code>, where anything on the node is written as
+<code>taw021@pwrlab.ucsd.edu:/the/path</code>.</p>
+<p><strong>Node → laptop</strong> (the direction you will use most — fetching results):</p>
+<pre data-lang="terminal"><code>scp taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/my_run_w2015_s2015/stat_national.csv ~/Downloads/
+</code></pre>
+<p><strong>Laptop → node</strong>:</p>
+<pre data-lang="terminal"><code>scp ~/Documents/new_costs.csv taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_csv/cost_assumptions/
+</code></pre>
+<p><strong>A whole folder</strong> — add <code>-r</code>:</p>
+<pre data-lang="terminal"><code>scp -r taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/my_run_w2015_s2015 ~/Downloads/
+</code></pre>
+<h2>10.2 rsync — better for anything large</h2>
+<p><code>rsync</code> only transfers what has actually changed, and can resume if interrupted. For
+multi-gigabyte result folders it is far better than <code>scp</code>:</p>
+<pre data-lang="terminal"><code>rsync -avzP taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/my_run_w2015_s2015 ~/Downloads/
+</code></pre>
+<p>The flags mean: <code>a</code> preserve everything, <code>v</code> tell me what you're doing, <code>z</code> compress
+during transfer, <code>P</code> show a progress bar and allow resuming.</p>
+<p>If you set up the <code>~/.ssh/config</code> nickname from Part 2.7, all of this gets shorter:</p>
+<pre data-lang="terminal"><code>rsync -avzP pwrlab:~/AdvAppliedEnergy_Pathways_2025/data_res/my_run_w2015_s2015 ~/Downloads/
+</code></pre>
+<h2>10.3 FileZilla — the drag-and-drop option (recommended for Windows)</h2>
+<p>If you would rather drag files than type paths, <strong>FileZilla</strong> gives you a two-panel window: your laptop's
+files on the left, the node's files on the right. You drag files between them. The
+original authors' README recommends exactly this approach.</p>
+<h3>10.3.1 Install it</h3>
+<ol>
+<li>Go to <strong>https://filezilla-project.org/download.php?type=client</strong></li>
+<li>Download <strong>FileZilla Client</strong> — the free one. You do <strong>not</strong> need FileZilla Pro or
+   FileZilla Server.</li>
+<li>Run the installer.</li>
+</ol>
+<blockquote class="warn">
+<p><strong>Watch out during installation.</strong> The official FileZilla installer has historically
+bundled optional extra software on some download mirrors. Read each screen and
+<strong>decline any offer to install additional programs, toolbars or "managers"</strong>. Choosing
+the "Custom" install and unticking extras is the safe path. Downloading from the
+official site above rather than a software-aggregator site avoids most of this.</p>
+</blockquote>
+<h3>10.3.2 Connect with Site Manager</h3>
+<p>Use Site Manager rather than the Quickconnect bar — it saves your settings so you only do
+this once.</p>
+<ol>
+<li>Open FileZilla.</li>
+<li><strong>File → Site Manager</strong> (or <code>Ctrl</code> + <code>S</code>).</li>
+<li>Click <strong>New site</strong> and name it <code>pwrlab</code>.</li>
+<li>Fill in the <strong>General</strong> tab:</li>
+</ol>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Protocol</strong></td>
+<td><code>SFTP - SSH File Transfer Protocol</code> ← <strong>must change this</strong>, it defaults to FTP</td>
+</tr>
+<tr>
+<td><strong>Host</strong></td>
+<td><code>pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td><strong>Port</strong></td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td><strong>Logon Type</strong></td>
+<td><code>Ask for password</code> (or <code>Key file</code> — see below)</td>
+</tr>
+<tr>
+<td><strong>User</strong></td>
+<td><code>taw021</code></td>
+</tr>
+</tbody>
+</table></div>
+<ol start="5">
+<li>Click <strong>Connect</strong>.</li>
+</ol>
+<p>The very first time, a dialog appears saying the host key is unknown. This is the same
+"have I met this machine before" check from Part 2.3. Tick <strong>Always trust this host</strong> and
+click <strong>OK</strong>.</p>
+<h3>10.3.3 Using an SSH key instead of a password</h3>
+<p>This is optional — password login works fine. If you set up a key in Part 2.7, you can
+have FileZilla use it instead:</p>
+<ol>
+<li><strong>Edit → Settings → Connection → SFTP</strong></li>
+<li>Click <strong>Add key file...</strong></li>
+<li>Browse to <code>C:\Users\&lt;YourName&gt;\.ssh\id_ed25519</code> (you may need to change the file-type
+   dropdown to <strong>All files</strong> to see it, as it has no extension).</li>
+<li>FileZilla will say the key is in OpenSSH format and offer to <strong>convert it to PuTTY's
+   .ppk format</strong> — say <strong>Yes</strong>. It writes a converted copy and leaves your original alone.</li>
+<li>Back in Site Manager, set <strong>Logon Type</strong> to <code>Key file</code> and point it at the converted
+   <code>.ppk</code> file.</li>
+</ol>
+<h3>10.3.4 Getting around the two panels</h3>
+<ul>
+<li><strong>Left panel = your Windows laptop.</strong> Top half is the folder tree, bottom half is the
+  contents.</li>
+<li><strong>Right panel = the node.</strong> Same arrangement.</li>
+<li>The box at the top right, <strong>Remote site</strong>, is where you type a path on the node. Paste
+  this in and press Enter to land in the project:
+  <code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code></li>
+<li><strong>To download</strong>, drag from right to left — or right-click a file and choose
+  <strong>Download</strong>.</li>
+<li><strong>To upload</strong>, drag from left to right, or right-click → <strong>Upload</strong>.</li>
+<li>Transfers appear in the queue at the bottom. A completed transfer moves to the
+  <strong>Successful transfers</strong> tab; anything that fails lands in <strong>Failed transfers</strong>, where
+  you can right-click and choose <strong>Reset and requeue</strong> to retry.</li>
+</ul>
+<h3>10.3.5 Fetching your results</h3>
+<p>This is the job you will do most often:</p>
+<ol>
+<li>In <strong>Remote site</strong>, go to
+   <code>/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res</code></li>
+<li>Find your run's folder (the newest one — click the <strong>Last modified</strong> column header to
+   sort by date).</li>
+<li>Drag the whole folder to your laptop's Downloads folder on the left.</li>
+</ol>
+<p>If you only want the headline numbers, you do not need the whole folder — just grab
+<code>stat_national.csv</code> and <code>stat_provincial.csv</code> from inside it. They are a few kilobytes,
+whereas the full folder can be gigabytes.</p>
+<h3>10.3.6 Two things to be careful of</h3>
+<ul>
+<li><strong>Avoid FileZilla's built-in editor for code.</strong> It downloads the file, opens it in
+  Notepad, and re-uploads it — and Windows editors can silently add Windows-style line
+  endings that break Python. Edit with <code>nano</code> on the node (Part 9) or the Claude Code
+  desktop app (Part 3) instead.</li>
+<li><strong>Never drag files into folders you do not recognise.</strong> You can write anywhere under
+  <code>/home/taw021</code>, and it is easy to drop a folder into the wrong place. Check the
+  <strong>Remote site</strong> path before releasing the mouse.</li>
+</ul>
+<h3>10.3.7 If FileZilla is not to your taste</h3>
+<p><strong>WinSCP</strong> (https://winscp.net) is a Windows-only alternative that many people prefer. Its
+settings are identical: protocol SFTP, host <code>pwrlab.ucsd.edu</code>, port 22, user <code>taw021</code>. It
+has no bundled-software history and offers a Windows-Explorer-style single-panel mode.</p>
+<h2>10.4 One thing to know about archives</h2>
+<p>The <code>unzip</code> command is <strong>not installed</strong> on this node. If you download a <code>.zip</code> file
+there, extract it with Python instead — it is built in and works identically:</p>
+<pre data-lang="terminal"><code>python3 -m zipfile -e archive.zip destination_folder/
+</code></pre>
+<p>To look inside an archive without extracting it:</p>
+<pre data-lang="terminal"><code>python3 -m zipfile -l archive.zip
+</code></pre>
+<hr />
+<h1 id="sec-12">Part 11 — Running the model</h1>
+<h2>11.1 What the model actually does</h2>
+<p>It is a <strong>capacity-expansion optimisation</strong> of China's electricity system. You tell it a
+target (say, a carbon budget consistent with 2 °C) and it works out the cheapest
+combination of wind farms, solar, storage, nuclear, coal with carbon capture and
+transmission lines that meets electricity demand every hour while hitting that target.</p>
+<p>It does this decade by decade — 2030, 2040, 2050, 2060 — and <strong>feeds each decade's answer
+in as the starting point for the next</strong>, so the capacity built in 2030 still exists in
+2040. That chaining is what <code>testMultiYear.py</code> is for.</p>
+<p>Under the bonnet it builds an enormous system of linear equations and hands it to
+<strong>Gurobi</strong>, a commercial solver, which finds the lowest-cost solution.</p>
+<h2>11.2 The two scripts you can run</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Script</th>
+<th>What it does</th>
+<th>Typical time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>testMultiYear.py</code></td>
+<td>All four decades in sequence. <strong>Use this one normally.</strong></td>
+<td>30 min (demo) to ~20 h (full)</td>
+</tr>
+<tr>
+<td><code>testSingleYear.py</code></td>
+<td>One decade only. Useful for quick tests.</td>
+<td>Proportionally less</td>
+</tr>
+</tbody>
+</table></div>
+<h2>11.3 The routine, step by step</h2>
+<p>Do this every time. It never changes.</p>
+<p><strong>Step 1 — connect</strong></p>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+</code></pre>
+<p><strong>Step 2 — start a tmux session</strong> (see Part 8 — do not skip this)</p>
+<pre data-lang="terminal"><code>tmux new -s modelrun
+</code></pre>
+<p><strong>Step 3 — activate the environment</strong></p>
+<pre data-lang="terminal"><code>source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+</code></pre>
+<p>Note the word <code>source</code> at the start — it matters, and <code>bash env.sh</code> will <em>not</em> work. (The
+reason: <code>source</code> runs the commands in your current shell so the changes stick; running it
+as a program would make the changes in a child shell that then exits, taking them with
+it.)</p>
+<p>You will know it worked because your prompt gains a <code>(.venv)</code> prefix and you are moved
+into the <code>pycode</code> folder:</p>
+<pre data-lang="terminal"><code>(.venv) taw021@pwrlab:~/AdvAppliedEnergy_Pathways_2025/pycode$
+</code></pre>
+<p><strong>Step 4 — run the model</strong></p>
+<pre data-lang="terminal"><code>python testMultiYear.py
+</code></pre>
+<p><strong>Step 5 — detach and go away.</strong> Press <code>Ctrl+B</code>, then <code>D</code>. Come back with
+<code>tmux attach -t modelrun</code>.</p>
+<h3>What <code>env.sh</code> is doing for you</h3>
+<p>Four things, all of which would otherwise be easy to forget:</p>
+<ol>
+<li>Activates the <code>.venv</code> virtual environment, so <code>python</code> means Python 3.9 with the right
+   packages.</li>
+<li>Sets <code>PYTHONPATH</code> to the project root. This is genuinely necessary — <code>plotResult.py</code>
+   contains <code>from pycode.callUtility import ...</code>, which only resolves if the project root
+   is on Python's search path.</li>
+<li>Sets <code>MPLBACKEND=Agg</code>, telling the plotting library not to try to open a window.
+   There is no screen on the node, so without this, plotting crashes.</li>
+<li>Moves you into <code>pycode/</code>, which is where the scripts expect to be run from.</li>
+</ol>
+<h2>11.4 Running without typing all that</h2>
+<p>If you would rather have a single command, add a shortcut. Open your personal settings
+file:</p>
+<pre data-lang="terminal"><code>nano ~/.bashrc
+</code></pre>
+<p>Go to the very bottom (<code>Alt</code>+<code>/</code> or just hold the down arrow) and add:</p>
+<pre data-lang="terminal"><code>alias gomodel='source ~/AdvAppliedEnergy_Pathways_2025/env.sh'
+alias results='cd ~/AdvAppliedEnergy_Pathways_2025/data_res &amp;&amp; ls -lht'
+alias freespace='df -h / | tail -1'
+</code></pre>
+<p>Save with <code>Ctrl+O</code>, <code>Enter</code>, then exit with <code>Ctrl+X</code>. Apply it:</p>
+<pre data-lang="terminal"><code>source ~/.bashrc
+</code></pre>
+<p>Now typing <code>gomodel</code> anywhere sets everything up, and <code>results</code> jumps to your output
+folder with the newest run listed first.</p>
+<hr />
+<h2>11.5 Or: ask Claude Code to run it for you</h2>
+<p>You do not have to drive this by hand. In a Claude Code session (Part 3) you can describe
+what you want in English and let it do the editing, launching and checking. This is a
+genuinely good use of it — the work is fiddly, repetitive, and easy to get subtly wrong.</p>
+<h3>The one instruction you must not omit</h3>
+<p><strong>Tell it to launch the run inside tmux.</strong> A command Claude starts is a child of the Claude
+session. If that session ends — you close the app, your laptop sleeps, the connection drops
+— the run dies with it, exactly as described in Part 5.2. Claude will not do this unless
+you ask, so make it part of the request:</p>
+<blockquote>
+<p><em>"Start the run inside a tmux session called <code>run1</code> so it survives if I disconnect."</em></p>
+</blockquote>
+<p>A request that works well end to end:</p>
+<blockquote>
+<p><em>"In <code>~/AdvAppliedEnergy_Pathways_2025</code>, set the scenario in <code>pycode/testMultiYear.py</code> to
+the 1.5 °C target with heat-pump heating and 7 optimisation days. Show me the diff before
+you save. Then start the run inside a tmux session called <code>run1</code>, and tell me how to check
+on it later."</em></p>
+</blockquote>
+<p>Note what that asks for: <strong>the diff before saving</strong>. Scenario parameters are the whole
+experiment, and a wrong value discovered eighteen hours into a run costs the run. Read the
+diff.</p>
+<h3>Other things worth handing to it</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Ask</th>
+<th>Why it helps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><em>"Is the run still going, and does it look healthy?"</em></td>
+<td>It can read <code>htop</code>, the log and CPU/memory at once and tell you whether the solver is working or swapping</td>
+</tr>
+<tr>
+<td><em>"The run failed — read the traceback and explain what went wrong."</em></td>
+<td>Explaining tracebacks and locating the real cause is something it is genuinely good at (Part 16.1)</td>
+</tr>
+<tr>
+<td><em>"Read <code>stat_national.csv</code> from the newest run and summarise the capacity mix by decade."</em></td>
+<td>Saves squinting at a wide CSV in the terminal</td>
+</tr>
+<tr>
+<td><em>"Which result folders are biggest, and which can I safely delete?"</em></td>
+<td>Disk is tight; it can check <code>du</code>, <code>df</code> and what has already been copied off</td>
+</tr>
+<tr>
+<td><em>"Compare <code>stat_national.csv</code> from these two runs and tell me what the scenario change did."</em></td>
+<td>The comparison between two runs is the actual output of this model (Part 4.10)</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Three cautions</h3>
+<blockquote>
+<p><strong>Claude runs commands as you, on a machine shared with thirteen other people.</strong> Read
+what it proposes before approving, particularly anything with <code>rm</code> in it. Start in
+<strong>Manual</strong> permission mode, where it asks before each action.</p>
+<p><strong>It cannot see the future cost of a long run.</strong> Before approving anything with
+<code>optimization_days = 365</code>, remember that is up to ~20 hours of a shared machine. Get it
+right at 7 days first.</p>
+<p><strong>Check the scenario actually changed.</strong> After it edits <code>testMultiYear.py</code>, a quick
+<code>git diff pycode/testMultiYear.py</code> shows exactly what moved. This is also how you undo
+it: <code>git checkout pycode/testMultiYear.py</code> restores the committed version.</p>
+</blockquote>
+<h3>From the node itself</h3>
+<p>If you are already in a PowerShell SSH session, you do not need the desktop app —
+<code>claude</code> is installed on the node:</p>
+<pre data-lang="terminal"><code>cd ~/AdvAppliedEnergy_Pathways_2025
+claude
+</code></pre>
+<p>The same requests work. This also has the advantage that you are already in a terminal, so
+you can start tmux yourself first and run <code>claude</code> inside it.</p>
+<hr />
+<h1 id="sec-13">Part 12 — Changing the scenario</h1>
+<h2>12.1 Where the settings are</h2>
+<p>All the knobs are hard-coded near the top of the script, under the comment
+<code># Step 0: Set parameters (if run locally on your laptop)</code>. Open it:</p>
+<pre data-lang="terminal"><code>nano ~/AdvAppliedEnergy_Pathways_2025/pycode/testMultiYear.py
+</code></pre>
+<p>Around <strong>lines 34–45</strong> you will find:</p>
+<pre data-lang="python"><code>optimization_days = 7
+start_year = 2030
+year_count = 4
+node = &quot;pc&quot;
+emission_target = &quot;2C&quot;
+ccs_start_year = 2040
+heating_electrification = &quot;heat_pump&quot;
+renewable_cost_decline = &quot;baseline&quot;
+endogenize_firm_capacity = 0
+demand_sensitivity = &quot;p5&quot;
+ccs_retrofit_cost = float(3500)
+custom_tag = &quot;heat_pump&quot;
+</code></pre>
+<p>Change the values to the right of the <code>=</code>. Save with <code>Ctrl+O</code>, <code>Enter</code>, <code>Ctrl+X</code>.</p>
+<blockquote class="warn">
+<p>Re-read Part 9.2 before you edit: do <strong>not</strong> change the spaces at the start of a line.</p>
+</blockquote>
+<h2>12.2 What each setting means</h2>
+<p>Each of these changes a constraint or a cost in the linear program (Part 4). The
+right-hand column says which — worth knowing, because it tells you what a change will
+actually do to the answer.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Allowed values</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>optimization_days</code></td>
+<td>5, 10, … 365</td>
+<td>How many days of the year to simulate. <strong>This is the main speed/accuracy dial.</strong> 7 for a quick test; 365 for a real result.</td>
+</tr>
+<tr>
+<td><code>start_year</code></td>
+<td>2030, 2040, 2050, 2060</td>
+<td>First decade to solve.</td>
+</tr>
+<tr>
+<td><code>year_count</code></td>
+<td>1–4</td>
+<td>How many decades to chain together.</td>
+</tr>
+<tr>
+<td><code>node</code></td>
+<td>any short text</td>
+<td>Just a label that ends up in the output folder name.</td>
+</tr>
+<tr>
+<td><code>emission_target</code></td>
+<td><code>"2C"</code>, <code>"15C"</code></td>
+<td>Carbon budget: 2 °C or 1.5 °C.</td>
+</tr>
+<tr>
+<td><code>ccs_start_year</code></td>
+<td>2040, 2050, 2060, 2070</td>
+<td>When carbon capture retrofits become available. Setting 2070 effectively means "never" — that is the no-CCS scenario.</td>
+</tr>
+<tr>
+<td><code>heating_electrification</code></td>
+<td><code>"chp_ccs"</code>, <code>"heat_pump"</code></td>
+<td>How northern China's district heating is decarbonised.</td>
+</tr>
+<tr>
+<td><code>renewable_cost_decline</code></td>
+<td><code>"baseline"</code>, <code>"conservative"</code></td>
+<td>How fast wind/solar/battery costs fall.</td>
+</tr>
+<tr>
+<td><code>endogenize_firm_capacity</code></td>
+<td>0, 1</td>
+<td>Whether the model decides how much firm (dispatchable) capacity to build, or takes it as given.</td>
+</tr>
+<tr>
+<td><code>demand_sensitivity</code></td>
+<td><code>"none"</code>, <code>"p5"</code>, <code>"m5"</code></td>
+<td>Demand ±5% or unchanged.</td>
+</tr>
+<tr>
+<td><code>ccs_retrofit_cost</code></td>
+<td>3500–10000</td>
+<td>Cost of a CCS retrofit (yuan/kW).</td>
+</tr>
+<tr>
+<td><code>custom_tag</code></td>
+<td>any short text</td>
+<td>Another label for the output folder.</td>
+</tr>
+</tbody>
+</table></div>
+<h2>12.3 Start small</h2>
+<p><strong>Test with <code>optimization_days = 7</code> first.</strong> It takes ~30 minutes instead of ~20 hours.
+Confirm the numbers look sensible, then change it to 365 and launch the real run. A typo
+found eighteen hours into a run costs the entire run.</p>
+<h2>12.4 The published scenarios</h2>
+<p>The original authors list the exact settings used for each figure in the paper in
+<code>README.md</code>, section 5.3. Those runs pass parameters on the command line rather than
+editing the file — the script has that capability commented out at lines 20–31. For your
+purposes, editing the values directly is simpler.</p>
+<hr />
+<h1 id="sec-14">Part 13 — Watching a run and reading the results</h1>
+<h2>13.1 Is it still alive?</h2>
+<p>Attach to your tmux session and look:</p>
+<pre data-lang="terminal"><code>tmux attach -t modelrun
+</code></pre>
+<p>Or, from any terminal, check whether the process exists:</p>
+<pre data-lang="terminal"><code>ps aux | grep testMultiYear
+</code></pre>
+<p>If you see a line mentioning <code>python testMultiYear.py</code>, it is running.</p>
+<h2>13.2 Watching resource usage</h2>
+<pre data-lang="terminal"><code>htop
+</code></pre>
+<p>An interactive live display of every process. Press <code>F6</code> then choose <code>PERCENT_CPU</code> to sort
+by CPU, or press <code>u</code> and pick <code>taw021</code> to see only your own processes. <strong>Press <code>q</code> to
+quit.</strong> <code>btop</code> is also installed and is prettier if you prefer it.</p>
+<p>What you want to see while the solver is working: one of your processes using several
+hundred percent CPU (that is normal — 100% means one core fully busy, so 1600% means
+sixteen cores), and a memory figure in the tens of gigabytes.</p>
+<h2>13.3 Watching the disk</h2>
+<pre data-lang="terminal"><code>df -h /
+</code></pre>
+<p>Run this before starting a long job and occasionally during one. If "Avail" drops below a
+couple of gigabytes, stop and clear space.</p>
+<h2>13.4 Where the results go</h2>
+<p>Everything lands in <code>data_res/</code>, in a folder whose name is assembled from your settings.
+With <code>year_count</code> greater than 1 the pattern is:</p>
+<pre data-lang="terminal"><code>data_res/test_&lt;MMDD&gt;_&lt;days&gt;days_all_years_&lt;node&gt;_w2015_s2015/
+</code></pre>
+<p>So a 7-day, all-decades run with <code>node = "pc"</code> started on 14 March gives:
+<code>data_res/test_0314_7days_all_years_pc_w2015_s2015/</code></p>
+<p>For a single-decade run (<code>year_count = 1</code>) the pattern instead includes the year and your
+custom tag: <code>test_&lt;MMDD&gt;_&lt;days&gt;days_&lt;year&gt;only_&lt;node&gt;_&lt;custom_tag&gt;_w2015_s2015</code>.</p>
+<p>Inside that folder:</p>
+<pre data-lang="terminal"><code>test_0314_7days_all_years_pc_w2015_s2015/
+├── stat_national.csv      ← ⭐ the headline summary, all decades side by side
+├── stat_provincial.csv    ← the same, broken down by province
+├── 2030/
+│   ├── inputs/            ← exactly what went in (keep this — it documents the run)
+│   ├── outputs/           ← raw solver output
+│   └── outputs_processed/ ← tidied-up results and summary_national_2030.csv
+├── 2040/  …
+├── 2050/  …
+└── 2060/  …
+</code></pre>
+<p><code>stat_national.csv</code> is what you want 95% of the time. It has one row per quantity and one
+column per decade.</p>
+<h2>13.5 Checking the answer is right</h2>
+<p>The authors give known-good numbers for the 7-day demo run, <strong>as the script is
+committed</strong> — do not change the scenario settings if you want to reproduce them. Look at
+<code>stat_national.csv</code>:</p>
+<ul>
+<li><strong>Line 19</strong>, onshore wind capacity: should read <strong>610, 1257, 1610, 2369</strong> GW across the
+  four decades</li>
+<li><strong>Line 21</strong>, utility solar capacity: <strong>234, 250, 389, 723</strong> GW</li>
+<li><strong>Line 29</strong>, new transmission capacity: <strong>27, 93, 67, 151</strong> GW</li>
+</ul>
+<p>This install was checked against the first two decades on 13 September 2026 and matched
+all six figures within rounding (608.9 / 234.1 / 27.6 and 1260.9 / 249.8 / 92.3). If your
+run disagrees, the scenario settings are the first place to look.</p>
+<p>To read it on the node:</p>
+<pre data-lang="terminal"><code>column -s, -t ~/AdvAppliedEnergy_Pathways_2025/data_res/YOUR_RUN_FOLDER/stat_national.csv | less -S
+</code></pre>
+<p>(<code>column -s, -t</code> lines the columns up; <code>less -S</code> stops long lines wrapping. Arrow keys to
+scroll sideways, <code>q</code> to quit.)</p>
+<p>If those numbers match, your setup is correct. If they don't, something in the inputs has
+changed.</p>
+<h2>13.6 Getting the results onto your laptop</h2>
+<p>From a terminal <strong>on your laptop</strong> (see Part 10):</p>
+<pre data-lang="terminal"><code>rsync -avzP taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/YOUR_RUN_FOLDER ~/Downloads/
+</code></pre>
+<p>Then open the CSVs in Excel as normal.</p>
+<h2>13.7 Clean up after yourself</h2>
+<p>Result folders are large and the disk is small. When you are finished with a run, copy it
+to your laptop and then delete it from the node:</p>
+<pre data-lang="terminal"><code>du -sh ~/AdvAppliedEnergy_Pathways_2025/data_res/*   # see what each one costs
+rm -r ~/AdvAppliedEnergy_Pathways_2025/data_res/old_run_folder
+</code></pre>
+<p>Remember <code>rm</code> is permanent. Make sure the copy on your laptop opened correctly <em>first</em>.</p>
+<hr />
+<h1 id="sec-15">Part 14 — Sharing the machine</h1>
+<p>There is <strong>no job scheduler</strong> on <code>pwrlab</code> — no Slurm, no queue. Nothing stops you from
+taking all 72 cores and all 187 GB of RAM. That makes courtesy the only mechanism.</p>
+<p><strong>See who else is here before you start something big:</strong></p>
+<pre data-lang="terminal"><code>who          # who is logged in
+htop         # what they are running, and how hard
+uptime       # load average — the three numbers at the end
+</code></pre>
+<p>For <code>uptime</code>'s load average: the numbers are the average number of processes wanting CPU
+over the last 1, 5 and 15 minutes. On a 72-core machine, a load of 10 is quiet and a load
+approaching 72 means it is fully committed. If it already reads 60, wait.</p>
+<p><strong>Limit how many cores you take.</strong> Gurobi grabs every core it can by default. The model
+already sets some solver options in <code>pycode/main.py</code> around line 347:</p>
+<pre data-lang="python"><code>interProvinModel.setParam('Method', 2)      # barrier algorithm
+interProvinModel.setParam('Crossover', 0)   # skip crossover
+</code></pre>
+<p>To cap the core count, add one more line directly underneath those:</p>
+<pre data-lang="python"><code>interProvinModel.setParam('Threads', 16)
+</code></pre>
+<p>Edit it with <code>nano ~/AdvAppliedEnergy_Pathways_2025/pycode/main.py</code> — press <code>Ctrl+_</code> and
+type <code>348</code> to jump straight there. Sixteen threads is a good neighbourly default and, for
+a barrier solve of this size, close to the point of diminishing returns anyway.</p>
+<blockquote>
+<p>Setting it in the code is the reliable way. Gurobi does not read a <code>GRB_THREADS</code>
+environment variable, so <code>export GRB_THREADS=16</code> would silently do nothing.</p>
+</blockquote>
+<p><strong>Lower your priority when the machine is busy.</strong> Prefixing a command with <code>nice</code> tells Linux your job is
+lower-priority, so other people's work goes first when there is contention. It costs you
+very little when the machine is idle:</p>
+<pre data-lang="terminal"><code>nice -n 10 python testMultiYear.py
+</code></pre>
+<p><strong>Watch the disk.</strong> This is the one that actually breaks things for other people. There is
+under 20 GB free. Check <code>df -h /</code> regularly and delete old runs.</p>
+<p><strong>Never run anything as <code>sudo</code></strong> unless the administrator has explicitly walked you
+through it. You do not need root access for any part of this workflow.</p>
+<hr />
+<h1 id="sec-16">Part 15 — Optional: the agentic-optimization framework</h1>
+<p>Everything so far runs the model <strong>by hand</strong>: you edit a scenario, launch it, wait, read
+the CSVs. That is the right approach while you are learning, and for a handful of runs.</p>
+<p><code>agentic-optimization</code> is a second tool, installed at <code>~/agentic-optimization</code>, that wraps
+this model so the workflow can be driven programmatically — or by an LLM agent. It is
+entirely optional. Nothing in Parts 1–14 depends on it.</p>
+<h2>15.1 What it actually gives you</h2>
+<p>Three things that are genuinely tedious to do by hand:</p>
+<ol>
+<li><strong>A run record.</strong> Every run writes one <code>run_record.json</code> capturing the exact config,
+   the solver status, timings and where the outputs went. Three months later you can still
+   say precisely what produced a number. Doing this by hand — and keeping it accurate —
+   is the part everyone skips.</li>
+<li><strong>A per-run workspace.</strong> Instead of editing <code>testMultiYear.py</code> and running in place, it
+   builds a throwaway directory of <strong>symlinks</strong> to the model and the data, and runs there.
+   The model is never modified, <code>data_res</code> never collides, and two runs can go at once.
+   This is a real improvement on the <code>FileExistsError</code> problem in Part 16.5.</li>
+<li><strong>A guardrail on what may be changed automatically.</strong> Settings are sorted into tiers:</li>
+</ol>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Meaning</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A</strong></td>
+<td>numerics — applied automatically</td>
+<td><code>time_limit</code>, <code>threads</code>, <code>bar_conv_tol</code></td>
+</tr>
+<tr>
+<td><strong>B</strong></td>
+<td>sanctioned modelling parameters — applied, but flagged</td>
+<td><code>year</code>, <code>optimization_days</code>, <code>demand_sensitivity</code>, <code>ccs_retrofit_cost</code></td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td><strong>relaxes a policy constraint — requires a human</strong></td>
+<td><code>emission_target</code>, <code>ccs_start_year</code>, <code>with_shedding</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Tier C is the point of the whole thing. <code>with_shedding</code> lets the model drop load, which
+   makes almost any infeasible scenario "solve" — the classic way a result quietly stops
+   meaning what you think it means. The framework will not apply that on its own.</p>
+<h2>15.2 Does it work here?</h2>
+<p>Yes — verified on this node on 13 September 2026:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pytest tests/ --ignore=tests/test_fixtures.py</code></td>
+<td><strong>665 passed</strong>, 0 failed</td>
+</tr>
+<tr>
+<td><code>pypsa_toy</code> smoke test (no licence needed)</td>
+<td>OPTIMAL in 4.4 s</td>
+</tr>
+<tr>
+<td><strong>Pathways smoke test</strong> — 2060, 5 days, 2 °C</td>
+<td><strong>OPTIMAL in 332 s</strong>, emissions −563.47 Mt exactly at the cap</td>
+</tr>
+</tbody>
+</table></div>
+<p>The Pathways acceptance test had never been run green before this — the repo says so
+outright. It passes.</p>
+<blockquote>
+<p><strong>Expect 10 failures in <code>tests/test_fixtures.py</code>.</strong> The framework ships adapters for
+three models; only the one we care about, <code>pathways</code>, is installed here. The other two
+models' submodules were deliberately not fetched, to save disk on a shared machine, and
+those 10 tests check fixtures belonging to the Indonesia model (<code>garuda</code>). They fail with
+<code>Input data directory not found: .../models/garuda/...</code>, which is the expected result,
+not a broken install. Everything that touches Pathways passes. Use the <code>--ignore</code> form
+above for a clean signal.</p>
+</blockquote>
+<h2>15.3 Running it</h2>
+<p>The environment is already installed. Two variables tell it where the model and its data
+live:</p>
+<pre data-lang="terminal"><code>cd ~/agentic-optimization
+export PATHWAYS_DATA_ROOT=$HOME/AdvAppliedEnergy_Pathways_2025
+export PATHWAYS_PYTHON=$HOME/AdvAppliedEnergy_Pathways_2025/.venv/bin/python
+</code></pre>
+<p>Check the wiring without solving anything:</p>
+<pre data-lang="terminal"><code>.venv/bin/python examples/pathways/smoke_test.py --dry-run
+</code></pre>
+<p>Then run one for real (about 5–6 minutes):</p>
+<pre data-lang="terminal"><code>.venv/bin/python examples/pathways/smoke_test.py --days 5 --run-dir $PWD/runs/my_first_run
+</code></pre>
+<p>Results land in <code>runs/my_first_run/</code>: <code>outputs/</code> for the CSVs, <code>solver.log</code> for the full
+Gurobi log, <code>run_record.json</code> for the provenance.</p>
+<blockquote>
+<p>Use tmux for this exactly as you would for a direct run (Part 8). It is the same solver
+doing the same work, and it dies the same way if your connection drops.</p>
+</blockquote>
+<h2>15.4 Two things that will trip you up</h2>
+<p>Both were found the first time this was run on this node.</p>
+<blockquote>
+<p><strong><code>--run-dir</code> must be an absolute path.</strong> A relative one fails instantly with
+<code>could not read config: No such file or directory</code>, because the driver runs as a
+subprocess from a different working directory. Use <code>$PWD/runs/...</code>, not <code>runs/...</code>.</p>
+<p><strong>A failed run leaves its workspace behind.</strong> On success the framework deletes the
+per-run <code>workspace/</code> automatically, leaving a few MB of archived outputs. On failure it
+keeps it for debugging — and that workspace holds the model's per-province hourly CSVs,
+which came to <strong>1.5 GB</strong> for a single failed run here. After any failure, check
+<code>du -sh ~/agentic-optimization/runs/*</code> and delete the dead run. On a disk with under
+10 GB free this matters quickly.</p>
+<p><strong>Do not go below <code>optimization_days = 5</code>.</strong> The shipped <code>SMOKE_CONFIG</code> uses 3, and it
+crashes with <code>KeyError: 0.8134</code>. The cause is worth understanding, because it is a
+property of the model rather than the framework — see below.</p>
+</blockquote>
+<h3>Why 3 days breaks the model</h3>
+<p>At <code>initData.py:387</code> the model precomputes a cost lookup table across capacity factors:</p>
+<pre data-lang="python"><code>for i in np.arange(0.0020, 0.8000, 0.0001):
+</code></pre>
+<p>Capacity factors from 0.2% up to <strong>80%</strong>. Later, at <code>initData.py:488</code>, it looks a cell up
+in that table by its capacity factor <strong>averaged over the sampled hours</strong>:</p>
+<pre data-lang="python"><code>gen_cost = cf_elep[file][CF] * year_cf / CF
+</code></pre>
+<p>Over a year, no cell averages above 80%. Over 72 hours, a windy cell easily can — and one
+did, at 81.34%, which is not a key in the table. Hence <code>KeyError: 0.8134</code>.</p>
+<p>This is why the model's own README lists the supported values as "5, 10, ..., 365". Three
+days was never a supported configuration. <strong>The framework did nothing wrong; it drove the
+model outside a range the model does not defend.</strong> That is a useful thing to have learned
+about the model, and a good illustration of why Part 16.1 — reading the traceback rather
+than the message — is worth the effort.</p>
+<h2>15.5 Driving it by conversation</h2>
+<p>The framework ships six agent skills in <code>.claude/skills/</code>, which is what makes it more than
+a scripting layer. Open a Claude Code session in <code>~/agentic-optimization</code> and they become
+available:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scenario-builder</code></td>
+<td>Turns "build a high-solar 2030 case" into a validated config</td>
+</tr>
+<tr>
+<td><code>model-runner</code></td>
+<td>Executes one config, captures <code>solver.log</code>, writes <code>run_record.json</code></td>
+</tr>
+<tr>
+<td><code>run-monitor</code></td>
+<td>Watches a solve live and decides whether to keep waiting, stop, or abort</td>
+</tr>
+<tr>
+<td><code>log-analyzer</code></td>
+<td>Diagnoses an INFEASIBLE / errored / time-limited run</td>
+</tr>
+<tr>
+<td><code>output-analyzer</code></td>
+<td>Sanity-checks a solved run for implausible dispatch, cost or emissions</td>
+</tr>
+<tr>
+<td><code>refiner</code></td>
+<td>Proposes tier-bounded config changes — and refuses to silently relax a policy constraint</td>
+</tr>
+<tr>
+<td><code>supervisor</code></td>
+<td>Runs the whole loop until it solves, gets stuck, or hits a Tier-C block</td>
+</tr>
+</tbody>
+</table></div>
+<p>The difference from Part 11.5 is the guardrail. Asking plain Claude Code to "get this to
+solve" invites it to reach for <code>with_shedding</code>, which lets the model drop load and makes
+almost anything solve. Here that is Tier C: the loop <strong>halts and asks a human</strong>. If you
+intend to iterate automatically toward a result, this is the safer place to do it.</p>
+<h2>15.6 When not to bother</h2>
+<p>If you want to run one scenario and look at the answer, Part 11 is simpler and you should
+use it. The framework earns its keep when you are running <strong>many</strong> scenarios, when you
+need to defend later exactly what produced a result, or when you want an agent to iterate
+without quietly relaxing the constraint the study rests on.</p>
+<hr />
+<h1 id="sec-17">Part 16 — When things go wrong</h1>
+<h2>16.1 How to read a Python error</h2>
+<p>The specific errors below are the ones you are most likely to hit, but you will
+eventually hit one that is not listed. Python errors are readable once you know the shape.</p>
+<pre data-lang="terminal"><code>Traceback (most recent call last):
+  File &quot;.../testMultiYear.py&quot;, line 185, in &lt;module&gt;
+    initCellData(vre=vre, ...)
+  File &quot;.../initData.py&quot;, line 731, in initCellData
+    re_county = gpd.read_file(work_dir + 'data_shp' + dir_flag + 're_county_level.shp')
+  File &quot;.../geopandas/io/file.py&quot;, line 164, in _is_zip
+    parsed = fiona.path.ParsedPath.from_uri(path)
+AttributeError: module 'fiona' has no attribute 'path'
+</code></pre>
+<p>Three rules:</p>
+<ol>
+<li><strong>Read the last line first.</strong> That is the actual error. Everything above it is history.</li>
+<li><strong>Read the traceback bottom-up.</strong> The bottom frame is where it broke; each line above is
+   what called it. The lowest frame with <em>your</em> project path in it — here
+   <code>initData.py, line 731</code> — is where to look first, because frames below that are inside
+   libraries.</li>
+<li><strong>The error type tells you the category:</strong></li>
+</ol>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError</code></td>
+<td>A package is missing, or the wrong Python is active</td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code></td>
+<td>A data file is missing or a path is wrong</td>
+</tr>
+<tr>
+<td><code>AttributeError</code></td>
+<td>Something exists but not the piece being asked for — very often a library version mismatch</td>
+</tr>
+<tr>
+<td><code>KeyError</code></td>
+<td>A name was looked up in a dictionary or dataframe column that does not contain it</td>
+</tr>
+<tr>
+<td><code>MemoryError</code></td>
+<td>Ran out of RAM (Part 5.3)</td>
+</tr>
+<tr>
+<td><code>IndentationError</code> / <code>SyntaxError</code></td>
+<td>The file was edited badly (Part 9.2)</td>
+</tr>
+</tbody>
+</table></div>
+<p>The example above was a genuine version mismatch: geopandas called <code>fiona.path</code>, which
+fiona removed in version 1.10. The fix was pinning <code>fiona&lt;1.10</code>. You could not have guessed
+that from the message alone — but "AttributeError inside a library I did not write" points
+straight at <em>versions</em>, which is the useful instinct.</p>
+<p><strong>When you are stuck</strong>, copy the whole traceback into the Claude Code session (Part 3) and
+ask what it means. Explaining a traceback and locating the cause is something it does well,
+and you will learn the pattern faster by seeing it explained a few times.</p>
+<h2>16.2 <code>ModuleNotFoundError: No module named 'pandas'</code></h2>
+<p>You forgot to activate the environment. Run:</p>
+<pre data-lang="terminal"><code>source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+</code></pre>
+<p>Check your prompt starts with <code>(.venv)</code>. This is the single most common error.</p>
+<h2>16.3 <code>ModuleNotFoundError: No module named 'pycode'</code></h2>
+<p><code>PYTHONPATH</code> is not set — which again means <code>env.sh</code> was not sourced, or you activated
+<code>.venv</code> by hand instead. Use <code>env.sh</code>.</p>
+<h2>16.4 <code>FileNotFoundError: .../data_mat/RegionDemand_Rev2.mat</code></h2>
+<p>A file from the Zenodo input data is missing. That data is already installed, so this
+means something has been moved or deleted. Check the three folders are still populated:</p>
+<pre data-lang="terminal"><code>du -sh ~/AdvAppliedEnergy_Pathways_2025/data_{pkl,mat,shp}
+</code></pre>
+<p>You should see roughly 3.3G, 868M and 42M. If one is empty, re-download from
+https://doi.org/10.5281/zenodo.14907700 — you need the <code>AdvAppliedEnergy_Pathways_2025.zip</code>
+archive, and only its <code>data_pkl</code>, <code>data_mat</code> and <code>data_shp</code> folders.</p>
+<h2>16.5 <code>FileExistsError: ... /provin_demand_hourly</code></h2>
+<p>You are re-running with the same settings on the same day, and the previous run's output
+folder is still there. The scripts create their folders with <code>os.mkdir</code>, which fails if
+the folder already exists — they are not designed to resume or overwrite.</p>
+<p>Delete the part-finished run and start again:</p>
+<pre data-lang="terminal"><code>rm -r ~/AdvAppliedEnergy_Pathways_2025/data_res/test_&lt;MMDD&gt;_&lt;days&gt;days_all_years_&lt;node&gt;_w2015_s2015
+</code></pre>
+<p>Use <code>ls ~/AdvAppliedEnergy_Pathways_2025/data_res/</code> first to get the exact folder name.
+Changing <code>custom_tag</code> or <code>node</code> in the script also sidesteps it, by giving the new run a
+different folder name — useful when you want to keep the earlier attempt.</p>
+<h2>16.6 <code>GurobiError: License expired</code></h2>
+<p>Should not happen before <strong>13 September 2027</strong>, which is when the installed licence runs
+out. If you see it sooner, check the licence file is still there and readable:</p>
+<pre data-lang="terminal"><code>grep -E &quot;^(TYPE|EXPIRATION|HOSTNAME|USERNAME)&quot; ~/gurobi.lic
+</code></pre>
+<p>You should see <code>TYPE=ACADEMIC</code>, <code>EXPIRATION=2027-09-13</code>, <code>HOSTNAME=pwrlab</code>,
+<code>USERNAME=taw021</code>. If the file is missing, or if <code>USERNAME</code> is not the account you are
+logged in as, that is the problem — the licence is locked to one user on one machine
+(Part 7.1). A renewal or a new key comes from the lab administrator; see
+<code>SETUP_ADMIN_REQUEST.md</code>.</p>
+<h2>16.7 <code>command not found: python</code></h2>
+<p>Either you have not sourced <code>env.sh</code>, or you are on your own laptop rather than the node.
+Check the prompt: it should say <code>taw021@pwrlab</code>.</p>
+<h2>16.8 <code>Permission denied</code> when writing a file</h2>
+<p>You are trying to write somewhere outside your home folder. You can only write inside
+<code>/home/taw021</code>. Check with <code>pwd</code>.</p>
+<h2>16.9 <code>No space left on device</code></h2>
+<p>The disk is full. Run <code>df -h /</code>, then <code>ncdu ~</code> to find what is using space, and delete old
+result folders.</p>
+<h2>16.10 The connection dropped mid-run</h2>
+<p>If you used tmux: nothing is lost. Reconnect and run <code>tmux attach -t modelrun</code>.
+If you did not: the run is gone. Start again, with tmux this time.</p>
+<h2>16.11 <code>IndentationError</code> or <code>SyntaxError</code> after editing</h2>
+<p>You changed the leading spaces on a line, or introduced a stray character. The error
+message names the line number. Open the file, go to that line (<code>Ctrl+_</code> in nano), and
+compare it with the lines around it — they should line up.</p>
+<p>To discard your edits entirely and restore the original file from Git:</p>
+<pre data-lang="terminal"><code>cd ~/AdvAppliedEnergy_Pathways_2025
+git checkout pycode/testMultiYear.py
+</code></pre>
+<p>This discards <em>all</em> your changes to that file, so note down your settings first.</p>
+<h2>16.12 Terminal is spewing text / has frozen</h2>
+<p><code>Ctrl+C</code> stops the running command. If the display is garbled afterwards, type <code>reset</code> and
+press Enter. If <code>Ctrl+C</code> does nothing and you are in tmux, detach with <code>Ctrl+B</code> <code>D</code> and
+investigate with <code>htop</code>.</p>
+<h2>16.13 It is running but seems stuck with no output</h2>
+<p>Large solves genuinely do go quiet for long stretches. Check <code>htop</code>: if your process is
+consuming CPU, it is working. If it is using 0% CPU and lots of memory, it may be swapping
+— check <code>free -h</code>.</p>
+<hr />
+<h1 id="sec-18">Part 17 — Cheat sheet</h1>
+<h2>Connect</h2>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu            # from PowerShell on Windows, or Terminal on Mac
+exit                                 # log out
+</code></pre>
+<h2>Run the model (the whole routine)</h2>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+tmux new -s modelrun
+source ~/AdvAppliedEnergy_Pathways_2025/env.sh
+python testMultiYear.py
+# press Ctrl+B then D to detach and walk away
+</code></pre>
+<h2>Come back to it</h2>
+<pre data-lang="terminal"><code>ssh taw021@pwrlab.ucsd.edu
+tmux attach -t modelrun
+</code></pre>
+<h2>Getting around</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pwd</code></td>
+<td>Where am I?</td>
+</tr>
+<tr>
+<td><code>ls -lh</code></td>
+<td>What's here, with sizes</td>
+</tr>
+<tr>
+<td><code>cd folder</code> / <code>cd ..</code> / <code>cd ~</code></td>
+<td>Go in / up / home</td>
+</tr>
+<tr>
+<td><code>less file.csv</code></td>
+<td>Read a file (<code>q</code> to quit)</td>
+</tr>
+<tr>
+<td><code>mkdir name</code></td>
+<td>New folder</td>
+</tr>
+<tr>
+<td><code>cp a b</code> / <code>cp -r a b</code></td>
+<td>Copy file / folder</td>
+</tr>
+<tr>
+<td><code>mv a b</code></td>
+<td>Move or rename</td>
+</tr>
+<tr>
+<td><code>rm file</code> / <code>rm -r folder</code></td>
+<td><strong>Delete — permanent, no undo</strong></td>
+</tr>
+<tr>
+<td><code>df -h /</code></td>
+<td>Free disk space</td>
+</tr>
+<tr>
+<td><code>du -sh *</code></td>
+<td>Size of each item here</td>
+</tr>
+<tr>
+<td><code>ncdu ~</code></td>
+<td>Interactive disk usage browser</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Keyboard</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Tab</code></td>
+<td>Auto-complete a name</td>
+</tr>
+<tr>
+<td><code>↑</code> / <code>↓</code></td>
+<td>Previous / next command</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>R</code></td>
+<td>Search command history</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>C</code></td>
+<td><strong>Stop what's running</strong></td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>L</code></td>
+<td>Clear the screen</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>D</code></td>
+<td>Log out</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>A</code> / <code>Ctrl</code>+<code>E</code></td>
+<td>Start / end of line</td>
+</tr>
+</tbody>
+</table></div>
+<h2>tmux</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Command / Keys</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tmux new -s NAME</code></td>
+<td>Start a session</td>
+</tr>
+<tr>
+<td><code>tmux ls</code></td>
+<td>List sessions</td>
+</tr>
+<tr>
+<td><code>tmux attach -t NAME</code></td>
+<td>Reconnect</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code> then <code>D</code></td>
+<td><strong>Detach, leave it running</strong></td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code> then <code>[</code></td>
+<td>Scroll back (<code>q</code> to exit)</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code> then <code>"</code></td>
+<td>Split screen horizontally</td>
+</tr>
+<tr>
+<td><code>Ctrl+B</code> then arrows</td>
+<td>Move between panes</td>
+</tr>
+</tbody>
+</table></div>
+<h2>nano</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keys</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl</code>+<code>O</code>, <code>Enter</code></td>
+<td>Save</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>X</code></td>
+<td>Exit</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>W</code></td>
+<td>Search</td>
+</tr>
+<tr>
+<td><code>Ctrl</code>+<code>_</code></td>
+<td>Go to line number</td>
+</tr>
+</tbody>
+</table></div>
+<h2>Move files (run on your laptop, not the node)</h2>
+<pre data-lang="terminal"><code># fetch results from the node
+rsync -avzP taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_res/RUN_FOLDER ~/Downloads/
+
+# send a file to the node
+scp myfile.csv taw021@pwrlab.ucsd.edu:/home/taw021/AdvAppliedEnergy_Pathways_2025/data_csv/
+</code></pre>
+<h2>Move files with a mouse instead (FileZilla)</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Protocol</td>
+<td><code>SFTP - SSH File Transfer Protocol</code> (<strong>not</strong> FTP)</td>
+</tr>
+<tr>
+<td>Host</td>
+<td><code>pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td>Port</td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td>User</td>
+<td><code>taw021</code></td>
+</tr>
+<tr>
+<td>Remote site</td>
+<td><code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Drag right-to-left to download, left-to-right to upload. Full walkthrough in Part 10.3.</p>
+<h2>Claude Code desktop app (Windows)</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Environment</td>
+<td><code>+ Add SSH connection</code></td>
+</tr>
+<tr>
+<td>SSH Host</td>
+<td><code>taw021@pwrlab.ucsd.edu</code></td>
+</tr>
+<tr>
+<td>SSH Port</td>
+<td><code>22</code></td>
+</tr>
+<tr>
+<td>Identity File</td>
+<td>leave blank</td>
+</tr>
+<tr>
+<td>Project folder</td>
+<td><code>/home/taw021/AdvAppliedEnergy_Pathways_2025</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>You are prompted for the account password. No integrated terminal in SSH sessions, so
+start long runs from a separate PowerShell <code>ssh</code> window inside tmux. Full walkthrough in
+Part 3.</p>
+<h2>Monitor</h2>
+<pre data-lang="terminal"><code>htop                    # live CPU and memory (q to quit)
+who                     # who else is logged in
+uptime                  # load average
+df -h /                 # free disk
+free -h                 # free memory
+ps aux | grep python    # is my run alive?
+</code></pre>
+<h2>Model-specific paths</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project root</td>
+<td><code>~/AdvAppliedEnergy_Pathways_2025</code></td>
+</tr>
+<tr>
+<td>Scripts to run</td>
+<td><code>~/AdvAppliedEnergy_Pathways_2025/pycode/</code></td>
+</tr>
+<tr>
+<td>Scenario settings</td>
+<td><code>pycode/testMultiYear.py</code>, lines ~34–45</td>
+</tr>
+<tr>
+<td>Results</td>
+<td><code>~/AdvAppliedEnergy_Pathways_2025/data_res/</code></td>
+</tr>
+<tr>
+<td>Headline summary</td>
+<td><code>data_res/&lt;run folder&gt;/stat_national.csv</code></td>
+</tr>
+<tr>
+<td>Environment setup</td>
+<td><code>source ~/AdvAppliedEnergy_Pathways_2025/env.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2>The five rules</h2>
+<ol>
+<li><strong>Always use tmux for anything that takes more than a minute.</strong></li>
+<li><strong>Always <code>source env.sh</code> before running Python.</strong></li>
+<li><strong>Test with <code>optimization_days = 7</code> before committing to 365.</strong></li>
+<li><strong><code>rm</code> is permanent. Read the line twice.</strong></li>
+<li><strong>Check <code>df -h /</code> — the disk is small and shared.</strong></li>
+</ol>
+<hr />
+<h2>Getting help</h2>
+<ul>
+<li><strong>This model:</strong> the authors ask that you contact Zhenhua — <code>zhenhua at ucsd dot edu</code>.</li>
+<li><strong>The original documentation:</strong> <code>README.md</code> in the project folder.</li>
+<li><strong>Outstanding setup issues:</strong> <code>SETUP_ADMIN_REQUEST.md</code> in the project folder.</li>
+<li><strong>Claude Code:</strong> https://code.claude.com/docs</li>
+<li><strong>Anything Linux:</strong> <code>man &lt;command&gt;</code>, or just ask Claude Code — explaining terminal errors
+  in plain English is something it is genuinely good at.</li>
+</ul></article>
+  </main>
+</div>
+</body></html>

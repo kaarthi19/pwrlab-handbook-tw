@@ -1,0 +1,10 @@
+# Solver / data-processing stack (README section 2.2 pins)
+numpy==1.23.5
+pandas==1.5.3
+scipy==1.10.1
+gurobipy==10.0.2
+shapely==2.0.1
+# Imported at module level by pycode/callUtility.py
+pypinyin
+python-Levenshtein
+pyparsing
