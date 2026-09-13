@@ -1,7 +1,8 @@
 """Build a fully self-contained handbook: no JS, no CDN, renders offline forever."""
 import re, os, html, markdown
 
-MD = os.path.expanduser('~/AdvAppliedEnergy_Pathways_2025/docs/NODE_GUIDE.md')
+HERE = os.path.dirname(os.path.abspath(__file__))
+MD = os.path.join(HERE, 'NODE_GUIDE.md')
 src = open(MD).read()
 
 # Drop the H1 and the Contents block (the sidebar replaces them)
@@ -48,11 +49,7 @@ navhtml = '\n'.join(
     % (' class="lead"' if lead else '', sid, num, html.escape(label))
     for sid, num, label, lead in nav)
 
-css = open('pwrlab_handbook.html').read()
-css = css[css.index('<style>'):css.index('</style>')+8]
-# The nav highlight was JS-driven; without JS, drop the scroll-spy rule
-css = css.replace('.nav a.on{color:var(--accent);border-left-color:var(--accent);background:var(--surface);font-weight:600}',
-                  '.nav a:target,.nav a:focus{color:var(--accent)}')
+css = '<style>\n' + open(os.path.join(HERE, 'style.css')).read() + '</style>'
 
 out = f'''<!doctype html>
 <html lang="en"><head>
@@ -98,5 +95,5 @@ out = f'''<!doctype html>
   </main>
 </div>
 </body></html>'''
-open('pwrlab_handbook_offline.html','w').write(out)
+open(os.path.join(HERE, 'index.html'), 'w').write(out)
 print('wrote %.0f KB, %d nav entries, 0 scripts' % (len(out)/1024, len(nav)))

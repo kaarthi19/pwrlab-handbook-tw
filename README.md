@@ -13,7 +13,8 @@ commands to type).
 | | |
 |---|---|
 | **[docs/NODE_GUIDE.md](docs/NODE_GUIDE.md)** | The source. GitHub renders it directly — start here. |
-| **[docs/handbook.html](docs/handbook.html)** | Styled, self-contained single file. No JavaScript, no CDN — download it and it works offline, forever. |
+| **[Read it on the web](https://kaarthi19.github.io/pwrlab-handbook-tw/)** | Published via GitHub Pages. |
+| **[docs/index.html](docs/index.html)** | The same page as a self-contained single file. No JavaScript, no CDN — download it and it works offline, forever. |
 
 ## What's in it
 
@@ -52,11 +53,20 @@ Run as committed, the model reproduces the published demo figures:
 
 ## Rebuilding the HTML
 
-`docs/handbook.html` is generated from the markdown. After editing the guide:
+`docs/index.html` is generated from the markdown. After editing the guide:
 
 ```bash
 pip install markdown
 python docs/build_standalone.py
 ```
 
-The markdown is the single source of truth; the HTML is a build artifact.
+The markdown is the single source of truth; `docs/index.html` is a build artifact, and
+`docs/style.css` holds the styling. The build needs no network and no JavaScript — the
+published page is plain pre-rendered HTML.
+
+## Published
+
+GitHub Pages serves `docs/` on the `main` branch:
+**https://kaarthi19.github.io/pwrlab-handbook-tw/**
+
+`docs/.nojekyll` stops Jekyll from reprocessing the pre-rendered HTML.

@@ -1,0 +1,157 @@
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --rail:#E6EAEE;
+  --ink:#15202B; --ink-2:#55656F; --ink-3:#7E8C96;
+  --rule:#D4DBE1; --rule-soft:#E3E8EC;
+  --accent:#A85A22; --accent-soft:#F0E2D6;
+  --danger:#9E2A22; --danger-soft:#F5E1DE;
+  --note:#166B6B; --note-soft:#DCECEC;
+  --term:#141C24; --term-ink:#D8E2EA; --term-dim:#7C8A97;
+  --shadow:0 1px 2px rgba(21,32,43,.06),0 6px 18px rgba(21,32,43,.05);
+  --sans:"IBM Plex Sans Condensed",ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --serif:"IBM Plex Serif",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F161D; --surface:#161F27; --rail:#121A22;
+  --ink:#E2E9EF; --ink-2:#94A3AF; --ink-3:#72818D;
+  --rule:#26333E; --rule-soft:#1D2831;
+  --accent:#DE8B4E; --accent-soft:#33251A;
+  --danger:#E1685F; --danger-soft:#341D1B;
+  --note:#54B5B5; --note-soft:#122B2B;
+  --term:#0A1016; --term-ink:#D2DDE6; --term-dim:#6C7B88;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --bg:#0F161D; --surface:#161F27; --rail:#121A22;
+  --ink:#E2E9EF; --ink-2:#94A3AF; --ink-3:#72818D;
+  --rule:#26333E; --rule-soft:#1D2831;
+  --accent:#DE8B4E; --accent-soft:#33251A;
+  --danger:#E1685F; --danger-soft:#341D1B;
+  --note:#54B5B5; --note-soft:#122B2B;
+  --term:#0A1016; --term-ink:#D2DDE6; --term-dim:#6C7B88;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);
+  font-size:16.5px;line-height:1.68;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;min-height:100vh}
+
+/* ---------- rail ---------- */
+.rail{background:var(--rail);border-right:1px solid var(--rule);
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 0 40px}
+.rail-head{padding:0 22px 18px}
+.mark{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:500}
+.rail-title{font-family:var(--sans);font-weight:700;font-size:21px;line-height:1.15;
+  margin:7px 0 0;letter-spacing:-.005em}
+.rail-sub{font-size:12.5px;color:var(--ink-3);margin:5px 0 0;line-height:1.45}
+
+.vitals{margin:0 22px 20px;padding:14px 0;border-top:1px solid var(--rule);
+  border-bottom:1px solid var(--rule);display:grid;gap:7px}
+.vital{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.vital dt{font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600}
+.vital dd{margin:0;font-family:var(--mono);font-size:12px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums}
+
+.nav-label{font-family:var(--sans);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;padding:0 22px;margin:0 0 8px}
+.nav{list-style:none;margin:0;padding:0}
+.nav a{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:baseline;
+  padding:5px 22px;font-family:var(--sans);font-size:13.5px;line-height:1.32;
+  color:var(--ink-2);text-decoration:none;border-left:2px solid transparent}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.nav .n{font-family:var(--mono);font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.nav a:target,.nav a:focus{color:var(--accent)}
+.nav a.on .n{color:var(--accent)}
+.nav li.lead a{font-weight:600;color:var(--ink)}
+.nav li.lead{margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--rule)}
+
+.theme-btn{margin:20px 22px 0;padding:6px 11px;background:transparent;color:var(--ink-2);
+  border:1px solid var(--rule);border-radius:3px;font-family:var(--sans);font-size:12px;
+  font-weight:600;letter-spacing:.04em;cursor:pointer}
+.theme-btn:hover{color:var(--ink);border-color:var(--ink-3)}
+
+/* ---------- main ---------- */
+.main{padding:0 0 100px;min-width:0}
+.masthead{padding:44px 52px 30px;border-bottom:1px solid var(--rule);background:var(--surface)}
+.masthead h1{font-family:var(--sans);font-weight:700;font-size:clamp(30px,4.2vw,44px);
+  line-height:1.06;letter-spacing:-.02em;margin:10px 0 0;text-wrap:balance;max-width:20ch}
+.lede{max-width:62ch;margin:16px 0 0;font-size:17px;color:var(--ink-2);line-height:1.6}
+.lede strong{color:var(--ink);font-weight:600}
+
+.strip{display:flex;flex-wrap:wrap;gap:0;margin:28px 0 0;border:1px solid var(--rule);
+  border-radius:3px;overflow:hidden;background:var(--bg)}
+.strip div{flex:1 1 128px;padding:11px 14px;border-right:1px solid var(--rule)}
+.strip div:last-child{border-right:0}
+.strip dt{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;margin:0}
+.strip dd{margin:3px 0 0;font-family:var(--mono);font-size:14px;color:var(--ink);
+  font-variant-numeric:tabular-nums;font-weight:500}
+
+/* ---------- document body ---------- */
+.doc{padding:0 52px;max-width:calc(68ch + 104px)}
+.doc h1{font-family:var(--sans);font-weight:700;font-size:29px;line-height:1.12;
+  letter-spacing:-.015em;margin:58px 0 0;padding-top:26px;border-top:2px solid var(--ink);
+  text-wrap:balance;scroll-margin-top:18px}
+.doc h1:first-child{margin-top:38px}
+.doc h2{font-family:var(--sans);font-weight:600;font-size:20px;line-height:1.2;
+  margin:38px 0 0;color:var(--ink);text-wrap:balance;scroll-margin-top:18px}
+.doc h3{font-family:var(--sans);font-weight:600;font-size:15.5px;letter-spacing:.01em;
+  margin:28px 0 0;color:var(--ink-2);text-wrap:balance}
+.doc p{margin:14px 0 0;max-width:68ch}
+.doc ul,.doc ol{margin:14px 0 0;padding-left:22px;max-width:66ch}
+.doc li{margin:5px 0}
+.doc li::marker{color:var(--ink-3)}
+.doc hr{display:none}
+.doc strong{font-weight:600}
+
+/* inline code */
+.doc :not(pre)>code{font-family:var(--mono);font-size:.855em;background:var(--accent-soft);
+  color:var(--ink);padding:1px 5px;border-radius:2px;word-break:break-word}
+
+/* code blocks read as a terminal — the whole guide is about the terminal */
+.doc pre{margin:18px 0 0;background:var(--term);border-radius:4px;overflow-x:auto;
+  padding:15px 18px;box-shadow:var(--shadow);border:1px solid var(--rule-soft)}
+.doc pre code{font-family:var(--mono);font-size:13px;line-height:1.62;color:var(--term-ink);
+  background:none;padding:0;white-space:pre}
+.doc pre::before{content:attr(data-lang);display:block;font-family:var(--sans);font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--term-dim);margin:0 0 9px;font-weight:600}
+
+/* tables */
+.tw{overflow-x:auto;margin:20px 0 0;border:1px solid var(--rule);border-radius:3px;
+  background:var(--surface)}
+.doc table{border-collapse:collapse;width:100%;font-family:var(--sans);font-size:14px;
+  font-variant-numeric:tabular-nums}
+.doc thead th{text-align:left;font-weight:600;font-size:11px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3);padding:10px 14px;border-bottom:1px solid var(--rule);
+  white-space:nowrap;background:var(--bg)}
+.doc tbody td{padding:9px 14px;border-bottom:1px solid var(--rule-soft);
+  vertical-align:top;line-height:1.5;color:var(--ink-2)}
+.doc tbody tr:last-child td{border-bottom:0}
+.doc tbody td:first-child{color:var(--ink);font-weight:500}
+.doc td code,.doc th code{background:none;padding:0;color:var(--accent);font-size:.9em}
+
+/* callouts */
+.doc blockquote{margin:20px 0 0;padding:13px 18px;border-left:3px solid var(--note);
+  background:var(--note-soft);border-radius:0 3px 3px 0;max-width:68ch}
+.doc blockquote p{margin:8px 0 0;font-size:15.5px;line-height:1.58}
+.doc blockquote p:first-child{margin:0}
+.doc blockquote.danger{border-left-color:var(--danger);background:var(--danger-soft)}
+.doc blockquote.warn{border-left-color:var(--accent);background:var(--accent-soft)}
+.doc blockquote code{background:rgba(0,0,0,.07)}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:20px 0}
+  .rail .nav-wrap{max-height:230px;overflow-y:auto}
+  .masthead{padding:30px 22px 24px}
+  .doc{padding:0 22px}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+html{scroll-behavior:smooth}
